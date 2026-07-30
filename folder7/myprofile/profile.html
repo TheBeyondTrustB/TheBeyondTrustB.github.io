@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>BeyondTrust Bank - My Profile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #002f6c;
+            --secondary-blue: #005eb8;
+            --accent-green: #00a859;
+            --accent-red: #d32f2f;
+            --text-dark: #1e2a3e;
+            --text-muted: #5a6e7c;
+            --border-light: #e9ecef;
+            --bg-light: #f8f9fb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #eef2f7 0%, #dce3ec 100%);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+
+        /* Back to Dashboard Button */
+        .back-btn {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            background: var(--primary-blue);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0, 47, 108, 0.25);
+            transition: all 0.2s ease;
+            z-index: 100;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: var(--secondary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 47, 108, 0.35);
+        }
+
+        .profile-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header Section with Cover */
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            padding: 2rem 2rem 5rem 2rem;
+            position: relative;
+        }
+
+        .profile-badge {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .bank-brand {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: white;
+            letter-spacing: 1px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 20px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+        }
+
+        .member-since {
+            background: rgba(255,255,255,0.12);
+            padding: 6px 16px;
+            border-radius: 30px;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Avatar & Basic Info */
+        .profile-avatar-section {
+            display: flex;
+            align-items: flex-end;
+            gap: 2rem;
+            margin-top: -2rem;
+            padding: 0 2rem;
+            flex-wrap: wrap;
+        }
+
+        .avatar-frame {
+            background: white;
+            border-radius: 50%;
+            padding: 5px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .avatar-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+        }
+
+        .profile-name-title h2 {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-name-title .account-tag {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .badge-verified {
+            background: #e6f7ec;
+            color: var(--accent-green);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* Content Grid - IMPROVED DESKTOP LAYOUT */
+        .profile-content {
+            padding: 2rem;
+        }
+
+        /* Desktop-optimized grid: 3 columns on large screens, 2 on medium, 1 on mobile */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Full width card spans all columns */
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* For cards that should span 2 columns on desktop */
+        .span-2 {
+            grid-column: span 2;
+        }
+
+        .info-card {
+            background: var(--bg-light);
+            border-radius: 24px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+            border: 1px solid var(--border-light);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid rgba(0,47,108,0.1);
+        }
+
+        .card-header i {
+            font-size: 1.6rem;
+            color: var(--primary-blue);
+            background: white;
+            padding: 8px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .card-header h3 {
+            font-size: 1.2rem;
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px dashed rgba(0,0,0,0.05);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            flex: 0 0 40%;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--text-dark);
+            text-align: right;
+            font-size: 0.95rem;
+            word-break: break-word;
+            flex: 0 0 55%;
+        }
+
+        /* Address block styling - better on desktop */
+        .address-block {
+            background: #fef9e6;
+            border-left: 4px solid #f5a623;
+            padding: 1rem;
+            border-radius: 14px;
+            margin-bottom: 1rem;
+        }
+
+        .address-block .info-row {
+            flex-direction: column;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .address-block .info-label {
+            margin-bottom: 8px;
+            flex: auto;
+        }
+
+        .address-block .info-value {
+            text-align: left;
+            flex: auto;
+            max-width: 100%;
+            line-height: 1.5;
+        }
+
+        /* Sensitive info masked style */
+        .masked {
+            letter-spacing: 1px;
+            font-family: monospace;
+            background: #f0f2f5;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+            flex-wrap: wrap;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary-blue);
+            color: var(--primary-blue);
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            border: none;
+            color: white;
+            padding: 10px 28px;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-blue);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,47,108,0.2);
+        }
+
+        /* Relationship bar */
+        .relationship-bar {
+            background: white;
+            border-radius: 20px;
+            padding: 1.2rem;
+            margin-top: 0.5rem;
+            border: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .relationship-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Security note inside card */
+        .security-note {
+            background: #eef2fa;
+            border-radius: 20px;
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: #2c5282;
+            margin-top: 1rem;
+        }
+
+        /* ===== RESPONSIVE BREAKPOINTS ===== */
+        
+        /* Desktop Large (1200px+) - 3 columns */
+        @media (min-width: 1200px) {
+            .info-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* Desktop Medium (992px - 1199px) - 2 columns */
+        @media (min-width: 992px) and (max-width: 1199px) {
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .full-width {
+                grid-column: 1 / -1;
+            }
+        }
+        
+        /* Tablet (768px - 991px) - 2 columns */
+        @media (min-width: 768px) and (max-width: 991px) {
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .full-width {
+                grid-column: 1 / -1;
+            }
+            body {
+                padding: 1.5rem;
+            }
+            .info-row {
+                flex-direction: row;
+            }
+            .info-label {
+                flex: 0 0 45%;
+            }
+            .info-value {
+                flex: 0 0 50%;
+                text-align: right;
+            }
+        }
+        
+        /* Mobile (under 768px) */
+        @media (max-width: 767px) {
+            body {
+                padding: 1rem;
+            }
+            .profile-container {
+                border-radius: 24px;
+            }
+            .profile-header {
+                padding: 1.5rem 1.5rem 4rem 1.5rem;
+            }
+            .profile-avatar-section {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 1rem;
+                padding: 0 1.5rem;
+            }
+            .profile-name-title .account-tag {
+                justify-content: center;
+            }
+            .profile-name-title h2 {
+                text-align: center;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+            .full-width {
+                grid-column: auto;
+            }
+            .info-row {
+                flex-direction: column;
+                gap: 6px;
+            }
+            .info-label {
+                flex: auto;
+            }
+            .info-value {
+                text-align: left;
+                flex: auto;
+            }
+            .action-buttons {
+                justify-content: center;
+            }
+            .card-header {
+                flex-direction: row;
+                text-align: left;
+            }
+            .relationship-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .profile-content {
+                padding: 1.2rem;
+            }
+            .avatar-img {
+                width: 90px;
+                height: 90px;
+            }
+            .profile-name-title h2 {
+                font-size: 1.4rem;
+            }
+        }
+        
+        /* Small Mobile (under 480px) */
+        @media (max-width: 480px) {
+            .back-btn {
+                top: 1rem;
+                left: 1rem;
+                padding: 6px 14px;
+                font-size: 0.8rem;
+            }
+            .bank-brand {
+                font-size: 1.1rem;
+                padding: 5px 12px;
+            }
+            .member-since {
+                font-size: 0.7rem;
+            }
+            .info-card {
+                padding: 1.2rem;
+            }
+            .card-header i {
+                font-size: 1.3rem;
+            }
+            .card-header h3 {
+                font-size: 1rem;
+            }
+            .btn-outline, .btn-primary {
+                padding: 8px 18px;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Desktop-specific alignment fixes */
+        @media (min-width: 992px) {
+            .profile-avatar-section {
+                padding: 0 2.5rem;
+            }
+            .profile-content {
+                padding: 2rem 2.5rem;
+            }
+            .info-value {
+                text-align: right;
+            }
+            /* Ensure address block looks good on desktop */
+            .address-block .info-value {
+                text-align: left;
+            }
+            .address-block .info-label {
+                text-align: left;
+            }
+        }
+
+        /* Fix for very large screens (over 1600px) */
+        @media (min-width: 1600px) {
+            .profile-container {
+                max-width: 1400px;
+            }
+            .info-grid {
+                gap: 2rem;
+            }
+            .info-card {
+                padding: 1.8rem;
+            }
+        }
+
+        .info-value a {
+            color: var(--secondary-blue);
+            text-decoration: none;
+        }
+        .info-value a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Status badge styles */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* Footer text */
+        .footer-note {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-muted);
+            border-top: 1px solid #eee;
+            padding-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="#" class="back-btn" id="backToDashboardBtn">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+
+    <div class="profile-container">
+        <!-- Header with bank branding -->
+        <div class="profile-header">
+            <div class="profile-badge">
+                <div class="bank-brand">
+                    <i class="fas fa-shield-alt"></i> BeyondTrust Bank
+                </div>
+                <div class="member-since">
+                    <i class="far fa-calendar-alt"></i> Member since 2026
+                </div>
+            </div>
+        </div>
+
+        <!-- Avatar & Basic Identification -->
+        <div class="profile-avatar-section">
+            <div class="avatar-frame">
+                <img src="profile pic/profile-picture.jpg.jpg" alt="CHRISTINE DELFELD" class="avatar-img" onerror="this.src='https://ui-avatars.com/api/?background=002f6c&color=fff&name=Anne+Blanford&size=120'">
+            </div>
+            <div class="profile-name-title">
+                <h2>CHRISTINE DELFELD</h2>
+                <div class="account-tag">
+                    <span><i class="fas fa-id-card"></i> Primary Account Holder</span>
+                    <span class="badge-verified"><i class="fas fa-check-circle"></i> Identity Verified</span>
+                    <span><i class="fas fa-flag-usa"></i> U.S. Citizen</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Profile Content -->
+        <div class="profile-content">
+            <div class="info-grid">
+                <!-- Personal Details Card -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <i class="fas fa-user-circle"></i>
+                        <h3>Personal Information</h3>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Full Name</span>
+                        <span class="info-value">CHRISTINE DELFELD</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Date of Birth</span>
+                        <span class="info-value" id="dobValue">October 1st, 1956 <span class="masked">(Age 69)</span></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Sex / Gender</span>
+                        <span class="info-value">Female <i class="fas fa-venus" style="color:#d63384;"></i></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Marital Status</span>
+                        <span class="info-value">null</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Nationality</span>
+                        <span class="info-value">United States</span>
+                    </div>
+                </div>
+
+                <!-- Contact & Credentials Card -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <i class="fas fa-envelope"></i>
+                        <h3>Contact & Credentials</h3>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email Address</span>
+                        <span class="info-value"><a href="mailto:ctdbeyond@gmail.com">ctdbeyond@gmail.com</a> <i class="fas fa-envelope-open-text" style="font-size:0.7rem; color:var(--accent-green);"></i></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Phone Number</span>
+                        <span class="info-value">null <span class="masked">(Unverified)</span></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Linked ID / Driver ID</span>
+                        <span class="info-value"><i class="fas fa-id-card"></i> 449 006*******<span class="masked">(ID)</span></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Tax ID </span>
+                        <span class="info-value">******</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Client Since</span>
+                        <span class="info-value">April 2026</span>
+                    </div>
+                </div>
+
+                <!-- Address Card - Full Width -->
+                <div class="info-card full-width">
+                    <div class="card-header">
+                        <i class="fas fa-map-pin"></i>
+                        <h3>Residential Address</h3>
+                    </div>
+                    <div class="address-block">
+                        <div class="info-row">
+                            <span class="info-label">Primary Residence</span>
+                            <span class="info-value">
+                                4 Weiss Terrace<br>
+                                Chestnut Ridge, NY 10977<br>
+                                <span style="font-size:0.8rem; color: var(--primary-blue);"><i class="fas fa-globe"></i> Rockland County</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Mailing Address</span>
+                        <span class="info-value">Same as residential</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Address Verification</span>
+                        <span class="info-value"><i class="fas fa-check-circle" style="color: var(--accent-green);"></i> Confirmed (Driver License)</span>
+                    </div>
+                </div>
+
+                <!-- Identification Documents Card -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <i class="fas fa-passport"></i>
+                        <h3>Government IDs</h3>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Driver's License (FL)</span>
+                        <span class="info-value">449 006******* <i class="fas fa-check-circle" style="color: var(--accent-green); font-size:0.75rem;"></i></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Linked ID Number</span>
+                        <span class="info-value">449 006*******</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">ID (US)</span>
+                        <span class="info-value">Valid until October 1st, 2026</span>
+                    </div>
+                </div>
+
+                <!-- Additional Information Card -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Account Overview</h3>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Account Type</span>
+                        <span class="info-value">BeyondTrust Checking</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Account Number</span>
+                        <span class="info-value">235326801378</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Routing Number</span>
+                        <span class="info-value">021000322</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Relationship Manager Bar -->
+            <div class="relationship-bar">
+                <div class="relationship-item">
+                    <i class="fas fa-handshake" style="color: var(--primary-blue); font-size: 1.2rem;"></i>
+                    <span style="font-weight: 500;">Relationship Manager: Olivia Martinez</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fas fa-phone-alt"></i> Ext. 7842</span>
+                </div>
+                <div class="relationship-item">
+                    <i class="fas fa-calendar-week"></i>
+                    <span>null</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="#" class="btn-outline" id="editProfileHint"><i class="fas fa-edit"></i> Edit Profile</a>
+                <a href="#" class="btn-outline" id="securitySettings"><i class="fas fa-shield-alt"></i> Security Settings</a>
+                <a href="#" class="btn-primary" id="dashboardRedirect"><i class="fas fa-home"></i> Go to Dashboard</a>
+            </div>
+
+            <div class="footer-note">
+                <i class="fas fa-laptop-code"></i> BeyondTrust Bank – Member FDIC.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation handlers
+        const backBtn = document.getElementById('backToDashboardBtn');
+        const dashboardRedirectBtn = document.getElementById('dashboardRedirect');
+        const editBtn = document.getElementById('editProfileHint');
+        const securityBtn = document.getElementById('securitySettings');
+
+        function goToDashboard() {
+            window.location.href = '../index.html';
+        }
+
+        if (backBtn) {
+            backBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                goToDashboard();
+            });
+        }
+
+        if (dashboardRedirectBtn) {
+            dashboardRedirectBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                goToDashboard();
+            });
+        }
+
+        if (editBtn) {
+            editBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert("Profile editing will be available in the next update. For any changes, please contact customer support.");
+            });
+        }
+
+        if (securityBtn) {
+            securityBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert("Security center:  coming soon.");
+            });
+        }
+
+        // Age calculation and update
+        function calculateAge() {
+            const birthDate = new Date(1957, 6, 11); // July 11, 1957 (month is 0-indexed)
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        // Update age dynamically
+        const dobElement = document.getElementById('dobValue');
+        if (dobElement) {
+            const currentAge = calculateAge();
+            dobElement.innerHTML = `July 11, 1957 <span class="masked">(Age ${currentAge})</span>`;
+        }
+
+        // Email copy functionality
+        const emailLink = document.querySelector('.info-value a[href^="mailto"]');
+        if (emailLink) {
+            emailLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigator.clipboard.writeText('ctdbeyond@gmail.com').then(() => {
+                    const toastMsg = document.createElement('div');
+                    toastMsg.innerText = 'Email copied to clipboard';
+                    toastMsg.style.position = 'fixed';
+                    toastMsg.style.bottom = '20px';
+                    toastMsg.style.left = '50%';
+                    toastMsg.style.transform = 'translateX(-50%)';
+                    toastMsg.style.background = '#002f6c';
+                    toastMsg.style.color = 'white';
+                    toastMsg.style.padding = '8px 20px';
+                    toastMsg.style.borderRadius = '40px';
+                    toastMsg.style.fontSize = '0.8rem';
+                    toastMsg.style.zIndex = '999';
+                    toastMsg.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+                    document.body.appendChild(toastMsg);
+                    setTimeout(() => toastMsg.remove(), 2000);
+                });
+            });
+        }
+
+        // Profile picture fallback
+        const profileImg = document.querySelector('.avatar-img');
+        if (profileImg) {
+            profileImg.addEventListener('error', function() {
+                this.onerror = null;
+                this.src = 'https://ui-avatars.com/api/?background=002f6c&color=fff&name=Anne+Blanford&size=120';
+            });
+        }
+    </script>
+</body>
+</html>
