@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeyondTrust Bank - Make Payment</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #002f6c;
+            --secondary-blue: #005eb8;
+            --accent-green: #00a859;
+            --accent-red: #d32f2f;
+            --text-dark: #2d3436;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: #f8f9fb;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+        /* Page Loader */
+    #pageLoader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--primary-blue);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    .pulse-loader {
+        width: 50px;
+        height: 50px;
+        background: white;
+        border-radius: 50%;
+        animation: pulse 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(0.9); opacity: 0.8; }
+        50% { transform: scale(1.1); opacity: 1; }
+        100% { transform: scale(0.9); opacity: 0.8; }
+    }
+
+    .dashboard-container {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+        .payment-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            cursor: pointer;
+        }
+
+        .search-bar {
+            flex: 1;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        .companies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .company-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .company-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 47, 108, 0.1);
+        }
+
+        .company-logo {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .company-name {
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .pay-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .pay-btn:hover {
+            background: var(--secondary-blue);
+        }
+
+        @media (max-width: 768px) {
+            .payment-container {
+                padding: 1.5rem;
+            }
+            
+            .companies-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .companies-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-bar {
+                padding: 0.8rem;
+            }
+        }
+           /* Add this to existing CSS */
+        .company-card {
+            position: relative;
+            text-decoration: none;
+            color: inherit;
+        }
+        .company-link {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .pay-btn {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <!-- Add this right after the <body> tag -->
+<div id="pageLoader">
+    <div class="pulse-loader"></div>
+</div>
+
+    <div class="payment-container">
+        <div class="header">
+            <button class="back-btn" onclick="window.history.back()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <input type="text" class="search-bar" placeholder="Search companies..." onkeyup="filterCompanies()">
+        </div>
+
+        <div class="companies-grid" id="companiesGrid">
+            <!-- Apple Music -->
+            <div class="company-card" data-name="apple music">
+                <a href="https://www.apple.com/apple-music/" class="company-link" target="_blank"></a>
+                <div class="company-logo" style="color: #FF2D55;">
+                    <i class="fab fa-apple"></i>
+                </div>
+                <div class="company-name">Apple Music</div>
+                <button class="pay-btn">Pay Now</button>
+            </div>
+
+            <!-- Netflix -->
+            <div class="company-card" data-name="netflix">
+                <a href="https://www.netflix.com" class="company-link" target="_blank"></a>
+                <div class="company-logo" style="color: #E50914;">
+                    <i class="fab fa-netflix"></i>
+                </div>
+                <div class="company-name">Netflix</div>
+                <button class="pay-btn">Pay Now</button>
+            </div>
+
+            <!-- Spotify -->
+            <div class="company-card" data-name="spotify">
+                <a href="https://www.spotify.com" class="company-link" target="_blank"></a>
+                <div class="company-logo" style="color: #1DB954;">
+                    <i class="fab fa-spotify"></i>
+                </div>
+                <div class="company-name">Spotify</div>
+                <button class="pay-btn">Pay Now</button>
+            </div>
+
+            <!-- YouTube Premium -->
+            <div class="company-card" data-name="youtube premium">
+                <a href="https://www.youtube.com/premium" class="company-link" target="_blank"></a>
+                <div class="company-logo" style="color: #FF0000;">
+                    <i class="fab fa-youtube"></i>
+                </div>
+                <div class="company-name">YouTube Premium</div>
+                <button class="pay-btn">Pay Now</button>
+            </div>
+
+            <!-- Amazon Prime -->
+            <div class="company-card" data-name="amazon prime">
+                <a href="https://www.amazon.com/amazonprime" class="company-link" target="_blank"></a>
+                <div class="company-logo" style="color: #146EB4;">
+                    <i class="fab fa-amazon"></i>
+                </div>
+                <div class="company-name">Amazon Prime</div>
+                <button class="pay-btn">Pay Now</button>
+            </div>
+
+            <!-- Disney+ -->
+            <div class="company-card" data-name="disney plus">
+                <a href="https://www.disneyplus.com" class="company-link" target="_blank"></a>
+                <div class="company-logo" style="color: #113CCF;">
+                    <i class="fas fa-film"></i>
+                </div>
+                <div class="company-name">Disney+</div>
+                <button class="pay-btn">Pay Now</button>
+            </div>
+
+            <!-- Xbox Live -->
+            <div class="company-card" data-name="xbox live">
+                <a href="https://www.xbox.com/live" class="company-link" target="_blank"></a>
+                <div class="company-logo" style="color: #107C10;">
+                    <i class="fab fa-xbox"></i>
+                </div>
+                <div class="company-name">Xbox Live</div>
+                <button class="pay-btn">Pay Now</button>
+            </div>
+
+            <!-- PlayStation Plus -->
+            <div class="company-card" data-name="playstation plus">
+                <a href="https://www.playstation.com/plus" class="company-link" target="_blank"></a>
+                <div class="company-logo" style="color: #003087;">
+                    <i class="fab fa-playstation"></i>
+                </div>
+                <div class="company-name">PlayStation Plus</div>
+                <button class="pay-btn">Pay Now</button>
+            </div>
+
+            <!-- Google Workspace -->
+            <div class="company-card" data-name="google workspace">
+                <a href="https://workspace.google.com" class="company-link" target="_blank"></a>
+                <div class="company-logo" style="color: #4285F4;">
+                    <i class="fab fa-google"></i>
+                </div>
+                <div class="company-name">Google Workspace</div>
+                <button class="pay-btn">Pay Now</button>
+            </div>
+
+            <!-- Adobe Creative Cloud -->
+            <div class="company-card" data-name="adobe creative cloud">
+                <a href="https://www.adobe.com/creativecloud.html" class="company-link" target="_blank"></a>
+                <div class="company-logo" style="color: #FF0000;">
+                    <i class="fab fa-adobe"></i>
+                </div>
+                <div class="company-name">Adobe Creative Cloud</div>
+                <button class="pay-btn">Pay Now</button>
+            </div>
+
+            <!-- Microsoft 365 -->
+            <div class="company-card" data-name="microsoft 365">
+                <a href="https://www.microsoft.com/microsoft-365" class="company-link" target="_blank"></a>
+                <div class="company-logo" style="color: #0078D4;">
+                    <i class="fab fa-microsoft"></i>
+                </div>
+                <div class="company-name">Microsoft 365</div>
+                <button class="pay-btn">Pay Now</button>
+            </div>
+
+            <!-- Nintendo Online -->
+            <div class="company-card" data-name="nintendo online">
+                <a href="https://www.nintendo.com/switch/online-service/" class="company-link" target="_blank"></a>
+                <div class="company-logo" style="color: #E60012;">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <div class="company-name">Nintendo Online</div>
+                <button class="pay-btn">Pay Now</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function filterCompanies() {
+            const input = document.querySelector('.search-bar');
+            const filter = input.value.toLowerCase();
+            const companies = document.querySelectorAll('.company-card');
+
+            companies.forEach(company => {
+                const name = company.getAttribute('data-name');
+                if (name.includes(filter)) {
+                    company.style.display = 'block';
+                } else {
+                    company.style.display = 'none';
+                }
+            });
+        }
+         // Page loader transition
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            document.getElementById('pageLoader').style.opacity = '0';
+            document.querySelector('.dashboard-container').style.opacity = '1';
+            
+            setTimeout(() => {
+                document.getElementById('pageLoader').style.display = 'none';
+                document.querySelector('.dashboard-container').style.display = 'block';
+            }, 300);
+        }, 3000);
+    });
+    </script>
+</body>
+</html>
