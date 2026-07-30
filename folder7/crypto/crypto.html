@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>BeyondTrust Bank - Crypto Portfolio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #002f6c;
+            --secondary-blue: #005eb8;
+            --accent-green: #00a859;
+            --accent-red: #d32f2f;
+            --accent-orange: #ff9800;
+            --crypto-purple: #6b2fb5;
+            --crypto-dark: #1a1a2e;
+            --text-dark: #2d3436;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: #0a0a1a;
+            color: white;
+            min-height: 100vh;
+            padding: 1rem;
+            position: relative;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        #pageLoader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #6b2fb5, #1a1a2e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .crypto-loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top: 4px solid #f7931a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .crypto-loader-text {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .dashboard-container {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Header */
+        .crypto-header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 2rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .crypto-header::before {
+            content: "₿";
+            position: absolute;
+            right: -20px;
+            top: -20px;
+            font-size: 150px;
+            opacity: 0.05;
+            font-weight: bold;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+            transition: background 0.3s;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .crypto-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .crypto-title h1 {
+            font-size: 2rem;
+        }
+
+        .crypto-subtitle {
+            opacity: 0.7;
+        }
+
+        /* Balance Card */
+        .balance-card {
+            background: linear-gradient(135deg, #6b2fb5, #9b59b6);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .balance-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        /* Action Buttons */
+        .actions-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .crypto-action-btn {
+            background: linear-gradient(135deg, #6b2fb5, #9b59b6);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            transition: transform 0.2s;
+        }
+
+        .crypto-action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Live Prices Section */
+        .prices-section {
+            background: #1a1a2e;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .prices-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .price-card {
+            background: #0f0f23;
+            border-radius: 15px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: transform 0.2s;
+        }
+
+        .price-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .price-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .price-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .price-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .price-details h4 {
+            font-size: 1rem;
+        }
+
+        .price-details p {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .price-value {
+            text-align: right;
+        }
+
+        .price-amount {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .price-change {
+            font-size: 0.7rem;
+        }
+
+        .positive { color: #00a859; }
+        .negative { color: #d32f2f; }
+
+        /* Transactions Section */
+        .transactions-section {
+            background: #1a1a2e;
+            border-radius: 20px;
+            padding: 1.5rem;
+        }
+
+        .transactions-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .crypto-transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #0f0f23;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .crypto-transaction-item:hover {
+            background: #1a1a3e;
+        }
+
+        .tx-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tx-icon {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 50%;
+            background: #6b2fb520;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .tx-icon img {
+            width: 60%;
+            height: 60%;
+            object-fit: contain;
+        }
+
+        .tx-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tx-details h4 {
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tx-details p {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tx-amount {
+            text-align: right;
+            flex-shrink: 0;
+            margin-left: 0.75rem;
+        }
+
+        .tx-amount .amount {
+            font-weight: 700;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .tx-amount .status {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .status-completed { background: #00a85920; color: #00a859; }
+        .status-pending { background: #ff980020; color: #ff9800; }
+
+        .credit { color: #00a859; }
+        .debit { color: #d32f2f; }
+
+        /* Custom Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 25px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid rgba(107, 47, 181, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            z-index: 1;
+        }
+
+        .close-modal {
+            font-size: 1.8rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            transition: transform 0.2s;
+        }
+
+        .close-modal:hover {
+            transform: scale(1.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 12px;
+            border: 1px solid #333;
+            background: #0f0f23;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #6b2fb5, #9b59b6);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .pin-input {
+            text-align: center;
+            font-size: 1.5rem;
+            letter-spacing: 5px;
+        }
+
+        /* Transaction Detail Styles */
+        .tx-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tx-detail-label {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tx-detail-value {
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: right;
+            word-break: break-all;
+            max-width: 60%;
+        }
+
+        .tx-detail-value.credit { color: #00a859; }
+        .tx-detail-value.debit { color: #d32f2f; }
+
+        .tx-detail-reference {
+            background: #0f0f23;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            text-align: center;
+            word-break: break-all;
+            margin: 0.5rem 0;
+        }
+
+        .tx-detail-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .tx-detail-status.pending {
+            background: #ff980020;
+            color: #ff9800;
+        }
+
+        .tx-detail-status.completed {
+            background: #00a85920;
+            color: #00a859;
+        }
+
+        /* Custom Toast/Popup Notification */
+        .custom-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-left: 4px solid #6b2fb5;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 2000;
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+        }
+
+        .custom-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .toast-icon.success { background: #00a85920; color: #00a859; }
+        .toast-icon.error { background: #d32f2f20; color: #d32f2f; }
+        .toast-icon.info { background: #ff980020; color: #ff9800; }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .toast-message {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        select option {
+            background: #1a1a2e;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .actions-row { grid-template-columns: 1fr; }
+            .prices-grid { grid-template-columns: 1fr; }
+            .crypto-title h1 { font-size: 1.5rem; }
+            .balance-amount { font-size: 1.8rem; }
+            .tx-details h4 { font-size: 0.8rem; }
+            .tx-amount .amount { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="pageLoader">
+        <div class="crypto-loader"></div>
+        <div class="crypto-loader-text">Loading Crypto Portfolio...</div>
+    </div>
+
+    <div class="dashboard-container" id="dashboardContainer">
+        <div class="crypto-header">
+            <button class="back-button" onclick="window.location.href='../index.html'">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+            <div class="crypto-title">
+                <h1>Crypto Portfolio</h1>
+            </div>
+            <div class="crypto-subtitle">Manage your digital assets securely</div>
+        </div>
+
+        <!-- Balance Card -->
+        <div class="balance-card">
+            <div class="balance-label">Total Crypto Balance (USDC)</div>
+            <div class="balance-amount" id="cryptoBalance">0.00 USDC</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions-row">
+            <button class="crypto-action-btn" onclick="openTransferModal()">
+                <i class="fas fa-paper-plane"></i> Send Crypto
+            </button>
+            <button class="crypto-action-btn" onclick="openBuyModal()">
+                <i class="fas fa-shopping-cart"></i> Buy Crypto
+            </button>
+        </div>
+
+        <!-- Live Prices Section -->
+        <div class="prices-section">
+            <div class="section-title">
+                <i class="fas fa-chart-line"></i> Live Market Prices
+                <span style="font-size: 0.7rem; opacity: 0.6;" id="lastUpdate"></span>
+            </div>
+            <div class="prices-grid" id="pricesGrid">
+                <!-- Bitcoin -->
+                <div class="price-card">
+                    <div class="price-info">
+                        <div class="price-icon"><img src="images/btc.png" alt="BTC" onerror="this.src='images/default-crypto.png'"></div>
+                        <div class="price-details">
+                            <h4>Bitcoin</h4>
+                            <p>BTC</p>
+                        </div>
+                    </div>
+                    <div class="price-value">
+                        <div class="price-amount" id="btcPrice">$0</div>
+                        <div class="price-change" id="btcChange"></div>
+                    </div>
+                </div>
+                <!-- Ethereum -->
+                <div class="price-card">
+                    <div class="price-info">
+                        <div class="price-icon"><img src="images/eth.png" alt="ETH" onerror="this.src='images/default-crypto.png'"></div>
+                        <div class="price-details">
+                            <h4>Ethereum</h4>
+                            <p>ETH</p>
+                        </div>
+                    </div>
+                    <div class="price-value">
+                        <div class="price-amount" id="ethPrice">$0</div>
+                        <div class="price-change" id="ethChange"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="transactions-section">
+            <div class="section-title">
+                <i class="fas fa-history"></i> Crypto Transaction History
+            </div>
+            <div class="transactions-list" id="cryptoTransactions"></div>
+        </div>
+    </div>
+
+    <!-- Transaction Detail Modal -->
+    <div id="txDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Transaction Details</h3>
+                <button class="close-modal" onclick="closeModal('txDetailModal')">&times;</button>
+            </div>
+            <div id="txDetailContent"></div>
+            <button class="submit-btn" onclick="closeModal('txDetailModal')" style="margin-top: 1rem;">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Transfer Modal -->
+    <div id="transferModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-paper-plane"></i> Send Crypto</h3>
+                <button class="close-modal" onclick="closeModal('transferModal')">&times;</button>
+            </div>
+            <div id="transferForm">
+                <div class="form-group">
+                    <label>Select Cryptocurrency</label>
+                    <select id="cryptoSelect" onchange="updateNetworkOptions()">
+                        <option value="">-- Select Coin --</option>
+                        <option value="bitcoin">Bitcoin (BTC)</option>
+                        <option value="ethereum">Ethereum (ETH)</option>
+                        <option value="usdc">USD Coin (USDC)</option>
+                        <option value="solana">Solana (SOL)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="networkGroup" style="display: none;">
+                    <label>Select Network</label>
+                    <select id="networkSelect">
+                        <option value="">-- Select Network --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Crypto Address</label>
+                    <input type="text" id="cryptoAddress" placeholder="Enter wallet address">
+                </div>
+                <div class="form-group">
+                    <label id="amountLabel">Amount</label>
+                    <input type="number" id="cryptoAmount" placeholder="Enter amount">
+                </div>
+                <button class="submit-btn" onclick="requestTransferPin()">Continue to PIN</button>
+            </div>
+            <div id="pinForm" style="display: none;">
+                <div class="form-group">
+                    <label>Enter Transfer PIN</label>
+                    <input type="password" id="transferPinInput" class="pin-input" maxlength="4" placeholder="****">
+                </div>
+                <button class="submit-btn" onclick="processCryptoTransfer()">Confirm Transfer</button>
+                <button class="submit-btn" style="background: #333; margin-top: 0.5rem;" onclick="cancelPin()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buy Modal -->
+    <div id="buyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-shopping-cart"></i> Buy Crypto</h3>
+                <button class="close-modal" onclick="closeModal('buyModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Select Cryptocurrency to Buy</label>
+                <select id="buyCryptoSelect">
+                    <option value="">-- Select Coin --</option>
+                    <option value="usdc">USD Coin (USDC)</option>
+                    <option value="bitcoin">Bitcoin (BTC) - Coming Soon</option>
+                    <option value="ethereum">Ethereum (ETH) - Coming Soon</option>
+                    <option value="solana">Solana (SOL) - Coming Soon</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Amount (USD)</label>
+                <input type="number" id="buyAmount" placeholder="Enter amount in USD">
+            </div>
+            <div class="form-group">
+                <label>You will receive</label>
+                <input type="text" id="receiveAmount" readonly placeholder="0.00" style="background: #0f0f23;">
+            </div>
+            <button class="submit-btn" onclick="requestBuyPin()">Continue to PIN</button>
+            <div id="buyPinForm" style="display: none; margin-top: 1rem;">
+                <div class="form-group">
+                    <label>Enter Transfer PIN</label>
+                    <input type="password" id="buyPinInput" class="pin-input" maxlength="4" placeholder="****">
+                </div>
+                <button class="submit-btn" onclick="processCryptoBuy()">Confirm Purchase</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== STORAGE KEYS ==========
+        const STORAGE_USDC_BALANCE = 'usdc_balance';
+        const STORAGE_BTC_BALANCE = 'btc_balance';
+        const STORAGE_ETH_BALANCE = 'eth_balance';
+        const STORAGE_SOL_BALANCE = 'sol_balance';
+        const STORAGE_CRYPTO_TRANSACTIONS = 'crypto_transactions';
+        const STORAGE_BALANCE = 'checking_balance';
+        const STORAGE_TRANSACTIONS = 'checking_transactions';
+        const CORRECT_PIN = "2123";
+
+        // Default crypto transactions (6M USDC credit)
+        const DEFAULT_CRYPTO_TRANSACTIONS = [
+            {
+                id: 'CONV-6000000-USDC',
+                type: 'receive',
+                coin: 'USDC',
+                amount: 6000000,
+                address: 'USD Conversion',
+                network: 'USD → USDC',
+                status: 'completed',
+                date: '28 Apr 2026',
+                time: '04:12 AM'
+            }
+        ];
+
+        // ========== BALANCE HELPERS ==========
+        function getCoinBalance(coin) {
+            const keyMap = {
+                'usdc': STORAGE_USDC_BALANCE,
+                'bitcoin': STORAGE_BTC_BALANCE,
+                'ethereum': STORAGE_ETH_BALANCE,
+                'solana': STORAGE_SOL_BALANCE
+            };
+            const key = keyMap[coin];
+            if (!key) return 0;
+            let balance = parseFloat(localStorage.getItem(key));
+            return isNaN(balance) ? 0 : balance;
+        }
+
+        function setCoinBalance(coin, amount) {
+            const keyMap = {
+                'usdc': STORAGE_USDC_BALANCE,
+                'bitcoin': STORAGE_BTC_BALANCE,
+                'ethereum': STORAGE_ETH_BALANCE,
+                'solana': STORAGE_SOL_BALANCE
+            };
+            const key = keyMap[coin];
+            if (key) localStorage.setItem(key, amount);
+        }
+
+        function getCoinDisplayName(coin) {
+            const names = {
+                'usdc': 'USDC',
+                'bitcoin': 'BTC',
+                'ethereum': 'ETH',
+                'solana': 'SOL'
+            };
+            return names[coin] || coin.toUpperCase();
+        }
+
+        // Custom Toast Notification
+        function showToast(message, title, type = 'success') {
+            const existingToast = document.querySelector('.custom-toast');
+            if (existingToast) existingToast.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            toast.innerHTML = `
+                <div class="toast-icon ${type}">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle')}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Custom Loading Modal
+        let loadingModal = null;
+        
+        function showLoading(message = 'Processing...') {
+            if (loadingModal) closeLoading();
+            
+            loadingModal = document.createElement('div');
+            loadingModal.className = 'modal';
+            loadingModal.style.display = 'flex';
+            loadingModal.innerHTML = `
+                <div class="modal-content" style="text-align: center; max-width: 300px;">
+                    <div class="crypto-loader" style="margin: 0 auto 1rem;"></div>
+                    <h3>${message}</h3>
+                    <p style="opacity: 0.7; margin-top: 0.5rem;">Please wait...</p>
+                </div>
+            `;
+            document.body.appendChild(loadingModal);
+        }
+        
+        function closeLoading() {
+            if (loadingModal) {
+                loadingModal.remove();
+                loadingModal = null;
+            }
+        }
+
+        // Load USDC balance (default 6,000,000 to match the transaction)
+        function loadUSDCBalance() {
+            let balance = parseFloat(localStorage.getItem(STORAGE_USDC_BALANCE));
+            if (isNaN(balance)) {
+                balance = 6000000.00; // updated default
+                localStorage.setItem(STORAGE_USDC_BALANCE, balance);
+            }
+            return balance;
+        }
+
+        function saveUSDCBalance(balance) {
+            localStorage.setItem(STORAGE_USDC_BALANCE, balance);
+        }
+
+        function loadCryptoTransactions() {
+            try {
+                let transactions = JSON.parse(localStorage.getItem(STORAGE_CRYPTO_TRANSACTIONS));
+                if (!transactions || !Array.isArray(transactions) || transactions.length === 0) {
+                    transactions = [...DEFAULT_CRYPTO_TRANSACTIONS];
+                    localStorage.setItem(STORAGE_CRYPTO_TRANSACTIONS, JSON.stringify(transactions));
+                }
+                return transactions;
+            } catch (e) {
+                console.error('Error loading crypto transactions:', e);
+                return [...DEFAULT_CRYPTO_TRANSACTIONS];
+            }
+        }
+
+        function saveCryptoTransaction(transaction) {
+            let transactions = loadCryptoTransactions();
+            transactions.unshift(transaction);
+            localStorage.setItem(STORAGE_CRYPTO_TRANSACTIONS, JSON.stringify(transactions));
+        }
+
+        function updateDisplay() {
+            const usdcBalance = loadUSDCBalance();
+            document.getElementById('cryptoBalance').textContent = `${usdcBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })} USDC`;
+            displayTransactions();
+        }
+
+        // ========== SHOW TRANSACTION DETAILS ==========
+        function showTxDetails(index) {
+            const transactions = loadCryptoTransactions();
+            const tx = transactions[index];
+            if (!tx) return;
+
+            const coinLower = tx.coin.toLowerCase();
+            const isReceive = tx.type === 'receive' || tx.type === 'buy';
+            const statusClass = tx.status === 'pending' ? 'pending' : 'completed';
+            const statusIcon = tx.status === 'pending' ? '<i class="fas fa-clock"></i>' : '<i class="fas fa-check-circle"></i>';
+
+            const detailHTML = `
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div class="tx-icon" style="width: 60px; height: 60px; margin: 0 auto 0.5rem; background: #6b2fb530;">
+                        <img src="images/${coinLower}.png" alt="${tx.coin}" style="width: 60%; height: 60%;" onerror="this.src='images/default-crypto.png'">
+                    </div>
+                    <h3 style="font-size: 1.2rem;">${isReceive ? 'Received' : 'Sent'} ${tx.coin}</h3>
+                </div>
+
+                <div class="tx-detail-reference">
+                    ${tx.id || 'N/A'}
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Amount</span>
+                    <span class="tx-detail-value ${isReceive ? 'credit' : 'debit'}">
+                        ${isReceive ? '+' : '-'} ${Math.abs(tx.amount).toLocaleString()} ${tx.coin}
+                    </span>
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Type</span>
+                    <span class="tx-detail-value">${isReceive ? 'Received' : 'Sent'}</span>
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Status</span>
+                    <span class="tx-detail-status ${statusClass}">
+                        ${statusIcon} ${tx.status === 'pending' ? 'Pending' : 'Completed'}
+                    </span>
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Date</span>
+                    <span class="tx-detail-value">${tx.date || 'N/A'}</span>
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Time</span>
+                    <span class="tx-detail-value">${tx.time || 'N/A'}</span>
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Network</span>
+                    <span class="tx-detail-value">${tx.network || 'N/A'}</span>
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Address</span>
+                    <span class="tx-detail-value" style="font-family: monospace; font-size: 0.8rem;">${tx.address || 'N/A'}</span>
+                </div>
+            `;
+
+            document.getElementById('txDetailContent').innerHTML = detailHTML;
+            document.getElementById('txDetailModal').style.display = 'flex';
+        }
+
+        function displayTransactions() {
+            const container = document.getElementById('cryptoTransactions');
+            const transactions = loadCryptoTransactions();
+            
+            if (transactions.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 2rem; opacity: 0.5;">No transactions yet</div>';
+                return;
+            }
+            
+            container.innerHTML = transactions.map((tx, idx) => {
+                const coinLower = tx.coin.toLowerCase();
+                const isReceive = tx.type === 'receive' || tx.type === 'buy';
+                return `
+                <div class="crypto-transaction-item" onclick="showTxDetails(${idx})">
+                    <div class="tx-info">
+                        <div class="tx-icon">
+                            <img src="images/${coinLower}.png" alt="${tx.coin}" onerror="this.src='images/default-crypto.png'">
+                        </div>
+                        <div class="tx-details">
+                            <h4>${isReceive ? 'Received' : 'Sent'} ${tx.coin}</h4>
+                            <p>${tx.date} • ${tx.time} • ${tx.network || 'N/A'}</p>
+                        </div>
+                    </div>
+                    <div class="tx-amount">
+                        <div class="amount ${isReceive ? 'credit' : 'debit'}">
+                            ${isReceive ? '+' : '-'} ${Math.abs(tx.amount).toLocaleString()} ${tx.coin}
+                        </div>
+                        <div class="status status-${tx.status}">${tx.status}</div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // Live Prices API
+        async function fetchCryptoPrices() {
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true');
+                const data = await response.json();
+                
+                const btcPrice = data.bitcoin?.usd || 0;
+                const ethPrice = data.ethereum?.usd || 0;
+                const btcChange = data.bitcoin?.usd_24h_change || 0;
+                const ethChange = data.ethereum?.usd_24h_change || 0;
+                
+                document.getElementById('btcPrice').textContent = `$${btcPrice.toLocaleString()}`;
+                document.getElementById('ethPrice').textContent = `$${ethPrice.toLocaleString()}`;
+                
+                document.getElementById('btcChange').innerHTML = `<span class="${btcChange >= 0 ? 'positive' : 'negative'}">${btcChange >= 0 ? '+' : ''}${btcChange.toFixed(2)}%</span>`;
+                document.getElementById('ethChange').innerHTML = `<span class="${ethChange >= 0 ? 'positive' : 'negative'}">${ethChange >= 0 ? '+' : ''}${ethChange.toFixed(2)}%</span>`;
+                
+                document.getElementById('lastUpdate').textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+            } catch (error) {
+                console.error('Error fetching prices:', error);
+                document.getElementById('btcPrice').textContent = '$63,245';
+                document.getElementById('ethPrice').textContent = '$3,245';
+            }
+        }
+
+        // Transfer Functions
+        let selectedCryptoForTransfer = '';
+        let transferAmount = 0;
+        let transferAddress = '';
+        let selectedNetwork = '';
+
+        function updateNetworkOptions() {
+            const crypto = document.getElementById('cryptoSelect').value;
+            const networkGroup = document.getElementById('networkGroup');
+            const networkSelect = document.getElementById('networkSelect');
+            const amountLabel = document.getElementById('amountLabel');
+            
+            if (crypto === 'usdc') {
+                networkGroup.style.display = 'block';
+                networkSelect.innerHTML = `
+                    <option value="">-- Select Network --</option>
+                    <option value="ERC20">Ethereum (ERC20)</option>
+                    <option value="TRC20">Tron (TRC20)</option>
+                `;
+                amountLabel.textContent = 'Amount (USDC)';
+            } else if (crypto === 'ethereum') {
+                networkGroup.style.display = 'block';
+                networkSelect.innerHTML = `<option value="ERC20">Ethereum (ERC20)</option>`;
+                amountLabel.textContent = 'Amount (ETH)';
+            } else if (crypto === 'bitcoin') {
+                networkGroup.style.display = 'block';
+                networkSelect.innerHTML = `<option value="BTC">Bitcoin Network</option>`;
+                amountLabel.textContent = 'Amount (BTC)';
+            } else if (crypto === 'solana') {
+                networkGroup.style.display = 'block';
+                networkSelect.innerHTML = `<option value="SOL">Solana Network</option>`;
+                amountLabel.textContent = 'Amount (SOL)';
+            } else {
+                networkGroup.style.display = 'none';
+                amountLabel.textContent = 'Amount';
+            }
+        }
+
+        function openTransferModal() {
+            document.getElementById('transferModal').style.display = 'flex';
+            document.getElementById('transferForm').style.display = 'block';
+            document.getElementById('pinForm').style.display = 'none';
+            document.getElementById('cryptoSelect').value = '';
+            document.getElementById('cryptoAddress').value = '';
+            document.getElementById('cryptoAmount').value = '';
+            document.getElementById('networkGroup').style.display = 'none';
+        }
+
+        function requestTransferPin() {
+            const crypto = document.getElementById('cryptoSelect').value;
+            const address = document.getElementById('cryptoAddress').value;
+            const amount = parseFloat(document.getElementById('cryptoAmount').value);
+            const network = document.getElementById('networkSelect')?.value || '';
+            
+            if (!crypto) {
+                showToast('Please select a cryptocurrency to continue', 'Selection Required', 'info');
+                return;
+            }
+            if (crypto === 'usdc' && !network) {
+                showToast('Please select a network for USDC transfer', 'Network Required', 'info');
+                return;
+            }
+            if (!address) {
+                showToast('Please enter a valid wallet address', 'Address Required', 'info');
+                return;
+            }
+            if (!amount || amount <= 0) {
+                showToast('Please enter a valid amount', 'Amount Required', 'info');
+                return;
+            }
+            
+            const coinBalance = getCoinBalance(crypto);
+            const coinName = getCoinDisplayName(crypto);
+            
+            if (amount > coinBalance) {
+                if (coinBalance === 0) {
+                    showToast(`You have an empty ${coinName} balance. Please buy ${coinName} first or select a different cryptocurrency.`, `Empty ${coinName} Balance`, 'error');
+                } else {
+                    showToast(`Insufficient ${coinName} balance. Available: ${coinBalance.toLocaleString()} ${coinName}`, 'Insufficient Balance', 'error');
+                }
+                return;
+            }
+            
+            selectedCryptoForTransfer = crypto;
+            transferAmount = amount;
+            transferAddress = address;
+            selectedNetwork = network;
+            
+            document.getElementById('transferForm').style.display = 'none';
+            document.getElementById('pinForm').style.display = 'block';
+            document.getElementById('transferPinInput').value = '';
+        }
+
+        function cancelPin() {
+            document.getElementById('transferForm').style.display = 'block';
+            document.getElementById('pinForm').style.display = 'none';
+            selectedCryptoForTransfer = '';
+            transferAmount = 0;
+            transferAddress = '';
+        }
+
+        function processCryptoTransfer() {
+            const pin = document.getElementById('transferPinInput').value;
+            
+            if (pin !== CORRECT_PIN) {
+                showToast('Invalid PIN. Please try again.', 'Authentication Failed', 'error');
+                document.getElementById('transferPinInput').value = '';
+                return;
+            }
+            
+            showLoading('Processing Transfer...');
+            
+            setTimeout(() => {
+                let coinBalance = getCoinBalance(selectedCryptoForTransfer);
+                coinBalance -= transferAmount;
+                setCoinBalance(selectedCryptoForTransfer, coinBalance);
+                
+                const now = new Date();
+                const txId = 'TX-' + Date.now();
+                const transaction = {
+                    id: txId,
+                    type: 'send',
+                    coin: selectedCryptoForTransfer.toUpperCase(),
+                    amount: transferAmount,
+                    address: transferAddress,
+                    network: selectedNetwork,
+                    status: 'pending',
+                    date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+                    time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                };
+                
+                saveCryptoTransaction(transaction);
+                closeLoading();
+                showToast(`${transferAmount.toLocaleString()} ${selectedCryptoForTransfer.toUpperCase()} transfer initiated. Reference: ${txId}`, 'Transfer Initiated', 'success');
+                
+                closeModal('transferModal');
+                updateDisplay();
+            }, 1500);
+        }
+
+        // Buy Functions
+        function openBuyModal() {
+            document.getElementById('buyModal').style.display = 'flex';
+            document.getElementById('buyCryptoSelect').value = '';
+            document.getElementById('buyAmount').value = '';
+            document.getElementById('receiveAmount').value = '';
+            document.getElementById('buyPinForm').style.display = 'none';
+        }
+
+        document.getElementById('buyCryptoSelect')?.addEventListener('change', function() {
+            const selected = this.value;
+            const amount = parseFloat(document.getElementById('buyAmount').value);
+            if (selected === 'usdc' && amount > 0) {
+                document.getElementById('receiveAmount').value = amount.toFixed(2) + ' USDC';
+            } else if (selected !== 'usdc' && selected !== '') {
+                document.getElementById('receiveAmount').value = 'Only USDC is available for purchase';
+            } else {
+                document.getElementById('receiveAmount').value = '';
+            }
+        });
+
+        document.getElementById('buyAmount')?.addEventListener('input', function() {
+            const selected = document.getElementById('buyCryptoSelect').value;
+            const amount = parseFloat(this.value);
+            if (selected === 'usdc' && amount > 0) {
+                document.getElementById('receiveAmount').value = amount.toFixed(2) + ' USDC';
+            } else if (selected !== 'usdc' && selected !== '') {
+                document.getElementById('receiveAmount').value = 'Only USDC is available for purchase';
+            }
+        });
+
+        function requestBuyPin() {
+            const selected = document.getElementById('buyCryptoSelect').value;
+            const amount = parseFloat(document.getElementById('buyAmount').value);
+            
+            if (!selected) {
+                showToast('Please select a cryptocurrency to buy', 'Selection Required', 'info');
+                return;
+            }
+            if (selected !== 'usdc') {
+                showToast('Only USDC is available for purchase at this time. Other cryptocurrencies will be available soon.', 'Limited Availability', 'info');
+                return;
+            }
+            if (!amount || amount <= 0) {
+                showToast('Please enter a valid amount', 'Amount Required', 'info');
+                return;
+            }
+            
+            let usdBalance = parseFloat(localStorage.getItem(STORAGE_BALANCE)) || 6314066;
+            if (amount > usdBalance) {
+                showToast(`Insufficient USD balance. Available: $${usdBalance.toLocaleString()}`, 'Purchase Failed', 'error');
+                return;
+            }
+            
+            window.buyAmountUSD = amount;
+            document.getElementById('buyPinForm').style.display = 'block';
+        }
+
+        function processCryptoBuy() {
+            const pin = document.getElementById('buyPinInput').value;
+            
+            if (pin !== CORRECT_PIN) {
+                showToast('Invalid PIN. Please try again.', 'Authentication Failed', 'error');
+                document.getElementById('buyPinInput').value = '';
+                return;
+            }
+            
+            showLoading('Processing Purchase...');
+            
+            setTimeout(() => {
+                let usdBalance = parseFloat(localStorage.getItem(STORAGE_BALANCE)) || 6314066;
+                usdBalance -= window.buyAmountUSD;
+                localStorage.setItem(STORAGE_BALANCE, usdBalance);
+                
+                let usdcBalance = loadUSDCBalance();
+                usdcBalance += window.buyAmountUSD;
+                saveUSDCBalance(usdcBalance);
+                
+                const now = new Date();
+                const buyId = 'BUY-' + Date.now();
+                
+                const cryptoTransaction = {
+                    id: buyId,
+                    type: 'receive',
+                    coin: 'USDC',
+                    amount: window.buyAmountUSD,
+                    address: 'Exchange Purchase',
+                    network: 'USD → USDC',
+                    status: 'completed',
+                    date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+                    time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                };
+                saveCryptoTransaction(cryptoTransaction);
+                
+                let mainTransactions = JSON.parse(localStorage.getItem(STORAGE_TRANSACTIONS)) || [];
+                const mainTransaction = {
+                    name: "Crypto Portfolio - USDC Purchase",
+                    time: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + " • " + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                    amount: window.buyAmountUSD,
+                    type: "debit",
+                    reference: buyId,
+                    status: "completed",
+                    description: `USDC Purchase via Crypto Portfolio - ${window.buyAmountUSD.toLocaleString()} USDC`,
+                    beneficiary: "Crypto Portfolio",
+                    date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+                    exactTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                    logo: "convert"
+                };
+                mainTransactions.unshift(mainTransaction);
+                localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(mainTransactions));
+                
+                closeLoading();
+                showToast(`Successfully purchased ${window.buyAmountUSD.toLocaleString()} USDC! New balance: ${usdcBalance.toLocaleString()} USDC`, 'Purchase Successful', 'success');
+                
+                closeModal('buyModal');
+                updateDisplay();
+            }, 1500);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('pageLoader').style.opacity = '0';
+                document.getElementById('dashboardContainer').style.opacity = '1';
+                setTimeout(() => {
+                    document.getElementById('pageLoader').style.display = 'none';
+                }, 300);
+            }, 2000);
+            
+            updateDisplay();
+            fetchCryptoPrices();
+            setInterval(fetchCryptoPrices, 30000);
+        });
+        
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

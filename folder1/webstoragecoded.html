@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>BeyondTrust Bank - Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #002f6c;
+            --secondary-blue: #005eb8;
+            --accent-green: #00a859;
+            --accent-red: #d32f2f;
+            --text-dark: #2d3436;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: #f8f9fb;
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 1rem;
+            position: relative;
+        }
+
+        /* Country Flag Display - Auto-dismiss */
+        .country-detector {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(0, 47, 108, 0.1);
+            animation: slideIn 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateX(-100px);
+            transition: all 0.5s ease;
+        }
+
+        .country-detector.visible {
+            animation: slideIn 0.5s ease-out forwards;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .country-detector.hiding {
+            animation: slideOut 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateX(-100px);
+        }
+
+        .country-detector.hidden {
+            display: none;
+        }
+
+        .country-flag {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #f8f9fb, #e9ecef);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid var(--secondary-blue);
+            box-shadow: 0 3px 10px rgba(0, 94, 184, 0.2);
+        }
+
+        .country-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .country-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .country-name {
+            font-weight: 600;
+            color: var(--primary-blue);
+            font-size: 1rem;
+        }
+
+        .country-status {
+            font-size: 0.75rem;
+            color: var(--accent-green);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .country-status i {
+            margin-right: 5px;
+        }
+
+        /* Timer indicator */
+        .timer-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(to right, var(--accent-green), var(--secondary-blue));
+            border-radius: 0 0 0 15px;
+            width: 100%;
+            animation: countdown 7s linear forwards;
+        }
+
+        /* Show button when hidden */
+        .show-country-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            background: var(--primary-blue);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 47, 108, 0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .show-country-btn.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .show-country-btn:hover {
+            background: var(--secondary-blue);
+            transform: scale(1.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes countdown {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        @keyframes pulseAttention {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulseAttention 2s infinite;
+        }
+
+        .country-detector:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .country-detector:hover .timer-indicator {
+            animation-play-state: paused;
+        }
+
+        #pageLoader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .pulse-loader {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.8; }
+        }
+
+        .dashboard-container {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+
+        .bank-logo {
+            position: absolute;
+            top: 1rem;
+            left: 1.5rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 2rem;
+        }
+
+        .profile-section img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .account-info {
+            line-height: 1.4;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .balance-section {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .currency {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .balance {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .account-number {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 2rem 1.5rem;
+            display: grid;
+            gap: 2rem;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: var(--primary-blue);
+            color: white;
+            padding: 1.2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 47, 108, 0.2);
+        }
+
+        .quick-access-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            background: #f8f9fb;
+            padding: 1.5rem;
+            border-radius: 16px;
+        }
+
+        .quick-access-item {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .quick-access-item:hover {
+            background: #f8f9fb;
+            transform: translateY(-3px);
+        }
+
+        .quick-access-item i {
+            font-size: 1.8rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-blue);
+        }
+
+        .transactions {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .transactions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 12px;
+            background: #f8f9fb;
+        }
+
+        .transaction-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            margin-right: 1rem;
+        }
+
+        .transaction-details {
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .debit { 
+            color: var(--accent-red); 
+            font-weight: 700;
+        }    
+        .credit { 
+            color: var(--accent-green); 
+            font-weight: 700;
+        }
+
+        #viewAllTransactions {
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        #viewAllTransactions:hover {
+            color: var(--secondary-blue);
+        }
+
+        @media (min-width: 768px) {
+            .dashboard-container {
+                margin: 2rem auto;
+            }
+            
+            .main-content {
+                grid-template-columns: 2fr 1fr;
+            }
+            
+            .balance {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quick-access-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .country-detector {
+                top: 10px;
+                left: 10px;
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .country-flag {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+            
+            .show-country-btn {
+                top: 10px;
+                left: 10px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="pageLoader">
+        <div class="pulse-loader"></div>
+    </div>
+    <script type="text/javascript">
+        var _smartsupp = _smartsupp || {};
+        _smartsupp.key = '38e6895aae3a8fbb54b0f9aa359f7807f19effed';
+        _smartsupp.cookieDomain = 'myglobaldeliveryservice.com';
+        _smartsupp.sitePlatform = 'WP 5.8.6';
+        window.smartsupp||(function(d) {
+            var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+            s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+            c.type='text/javascript';c.charset='utf-8';c.async=true;
+            c.src='//www.smartsuppchat.com/loader.js';s.parentNode.insertBefore(c,s);
+        })(document);
+    </script>
+
+    <!-- Show Country Button (hidden initially) -->
+    <button class="show-country-btn" id="showCountryBtn" title="Show Location">
+        <i class="fas fa-globe-americas"></i>
+    </button>
+
+    <!-- Country Detector Widget -->
+    <div class="country-detector" id="countryDetector">
+        <div class="timer-indicator"></div>
+        <div class="country-flag pulse" id="countryFlag">🌐</div>
+        <div class="country-info">
+            <div class="country-label">Your Location</div>
+            <div class="country-name" id="countryName">Detecting...</div>
+            <div class="country-status" id="countryStatus">
+                <i class="fas fa-shield-alt"></i> Secure Connection
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="header">
+            <div class="bank-logo">Investment account</div>
+            <button class="logout-btn" onclick="window.location.href='../index.html'">Sign Out</button>
+            
+            <div class="profile-section">
+                <img src="profile pic/profile-picture.jpg.jpg" alt="Profile Picture">
+                <div class="account-info">
+                    <h1>ANNE BLANFORD</h1>
+                    <div class="account-number">253885910240</div>
+                </div>
+            </div>
+
+            <div class="balance-section">
+                <div class="currency">Available Balance (USD)</div>
+                <div class="balance" id="balance">£4,008,008.40</div>
+                <div class="account-number" id="updateTime">Last updated: 2 min ago</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div>
+                <div class="actions">
+                    <a href="transfer/transfer.html" class="action-btn">
+                        <i class="fas fa-exchange-alt"></i>
+                        Transfer
+                    </a>
+                    <a href="pay/pay.html" class="action-btn">
+                        <i class="fas fa-qrcode"></i>
+                        Pay
+                    </a>
+                    <a href="addmoney/addmoney.html" class="action-btn">
+                        <i class="fas fa-plus"></i>
+                        Add Money
+                    </a>
+                </div>
+
+                <div class="transactions">
+                    <div class="transactions-header">
+                        <h2>Recent Transactions</h2>
+                        <a id="viewAllTransactions" style="color: var(--primary-blue); text-decoration: none;">
+                            View All <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div id="transactionHistory"></div>
+                </div>
+            </div>
+
+            <div class="quick-access">
+                <h2 style="margin-bottom: 1.5rem; color: var(--text-dark);">Quick Access</h2>
+                <div class="quick-access-grid">
+                    <div class="quick-access-item" onclick="location.reload()">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div>Airtime</div>
+                    </div>
+                    <a href="internet/internet.html" class="quick-access-item">
+                        <i class="fas fa-wifi"></i>
+                        <div>Internet</div>
+                    </a>
+                    <a href="cards/cards.html" class="quick-access-item">
+                        <i class="fas fa-credit-card"></i>
+                        <div>Cards</div>
+                    </a>
+                    <a href="statements/statements.html" class="quick-access-item">
+                        <i class="fas fa-file-invoice"></i>
+                        <div>Statements</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - Set your desired default balance here
+        const DEFAULT_BALANCE = 4008008.40;
+        const BANK_LOGOS = {
+            'Revolut': 'images/revolut-logo.png',
+            'Wise': 'images/wise-logo.png',
+            'N26': 'images/n26-logo.png',
+            'Chase Bank': 'images/chase-logo.png',
+            'HSBC': 'images/hsbc-logo.png'
+        };
+
+        // Auto-dismiss timer
+        let dismissTimer;
+        const DISPLAY_TIME = 7000; // 7 seconds
+        let isDismissed = false;
+
+        // System Initialization
+        function initializeData() {
+            if (new URLSearchParams(window.location.search).has('reset')) {
+                localStorage.clear();
+            }
+
+            let balance = parseFloat(localStorage.getItem('balance'));
+            if(isNaN(balance)) {
+                balance = DEFAULT_BALANCE;
+                localStorage.setItem('balance', balance);
+            }
+
+            let transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [
+                { name: "Chase Bank - Federal Commission", time: "12 Jan 2024 • 11:16 AM", amount: -4600.00, type: "debit" },
+                { name: "HSBC - Deposit", time: "10 Jan 2024 • 7:33 PM", amount: 5200.00, type: "credit" },
+                { name: "Revolut - Money Transfer", time: "15 Feb 2022 • 09:45 AM", amount: -1200.00, type: "debit" },
+                { name: "Wise - Currency Exchange", time: "18 Dec 2020 • 02:30 PM", amount: -850.00, type: "debit" },
+                { name: "N26 - Subscription Payment", time: "20 Oct 2019 • 10:15 AM", amount: -45.00, type: "debit" },
+                { name: "Revolut - Cashback Reward", time: "25 Jan 2017 • 04:20 PM", amount: 150.00, type: "credit" }
+            ];
+
+            localStorage.setItem('transactionHistory', JSON.stringify(transactions));
+            return { balance, transactions };
+        }
+
+        let { balance, transactions: transactionHistory } = initializeData();
+        let showingAllTransactions = false;
+
+        // Transaction Management
+        function updateTransactionHistory() {
+            const transactionHistoryElement = document.getElementById('transactionHistory');
+            const viewAllLink = document.getElementById('viewAllTransactions');
+            const transactionsToShow = showingAllTransactions ? transactionHistory : transactionHistory.slice(0, 3);
+            
+            viewAllLink.innerHTML = showingAllTransactions ? 
+                'Show Less <i class="fas fa-arrow-up"></i>' : 
+                'View All <i class="fas fa-arrow-down"></i>';
+            
+            transactionHistoryElement.innerHTML = transactionsToShow.map(transaction => `
+                <div class="transaction-item">
+                    <img src="${BANK_LOGOS[transaction.name.split(' - ')[0]] || 'images/default-bank.png'}" 
+                         class="transaction-logo" 
+                         alt="${transaction.name.split(' - ')[0]} logo">
+                    <div class="transaction-details">
+                        <div class="transaction-name">${transaction.name}</div>
+                        <div class="transaction-time">${transaction.time}</div>
+                    </div>
+                    <div class="transaction-amount ${transaction.type}">
+                        ${transaction.type === 'debit' ? '−' : '+'}$${Math.abs(transaction.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Event Handlers
+        document.getElementById('viewAllTransactions').addEventListener('click', () => {
+            showingAllTransactions = !showingAllTransactions;
+            updateTransactionHistory();
+        });
+
+        // System Functions - Enhanced Location Detection with Auto-Dismiss
+        async function detectCountry() {
+            try {
+                // Show detecting state
+                document.getElementById('countryName').textContent = 'Detecting...';
+                document.getElementById('countryFlag').textContent = '🌐';
+                document.getElementById('countryFlag').classList.add('pulse');
+                
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                
+                // Get country flag emoji
+                const flag = String.fromCodePoint(...[...data.country_code.toUpperCase()].map(c => 127397 + c.charCodeAt()));
+                
+                // Update the display
+                document.getElementById('countryFlag').textContent = flag;
+                document.getElementById('countryName').textContent = data.country_name;
+                
+                // Add additional info for fun
+                const city = data.city || 'Unknown City';
+                const countryCode = data.country_code;
+                
+                // Remove pulse after detection
+                setTimeout(() => {
+                    document.getElementById('countryFlag').classList.remove('pulse');
+                }, 2000);
+                
+                // Show success message
+                document.getElementById('countryStatus').innerHTML = 
+                    `<i class="fas fa-map-marker-alt"></i> ${city}, ${countryCode}`;
+                
+                // Start auto-dismiss timer
+                startDismissTimer();
+                
+            } catch (error) {
+                console.error('Error detecting location:', error);
+                
+                // Fallback
+                document.getElementById('countryName').textContent = 'Location Unknown';
+                document.getElementById('countryFlag').textContent = '🌐';
+                document.getElementById('countryStatus').innerHTML = 
+                    `<i class="fas fa-exclamation-triangle"></i> Manual override active`;
+                
+                // Still start dismiss timer even on error
+                startDismissTimer();
+            }
+        }
+
+        // Auto-dismiss functionality
+        function startDismissTimer() {
+            // Clear any existing timer
+            if (dismissTimer) {
+                clearTimeout(dismissTimer);
+            }
+            
+            // Set new timer
+            dismissTimer = setTimeout(() => {
+                hideCountryDetector();
+            }, DISPLAY_TIME);
+        }
+
+        function hideCountryDetector() {
+            const detector = document.getElementById('countryDetector');
+            detector.classList.remove('visible');
+            detector.classList.add('hiding');
+            
+            // Show the button after hiding animation completes
+            setTimeout(() => {
+                detector.classList.add('hidden');
+                isDismissed = true;
+                
+                // Show the show button
+                const showBtn = document.getElementById('showCountryBtn');
+                showBtn.classList.add('visible');
+            }, 500); // Match the CSS transition time
+        }
+
+        function showCountryDetector() {
+            const detector = document.getElementById('countryDetector');
+            const showBtn = document.getElementById('showCountryBtn');
+            
+            // Hide the show button
+            showBtn.classList.remove('visible');
+            
+            // Show the detector
+            detector.classList.remove('hidden', 'hiding');
+            detector.classList.add('visible');
+            isDismissed = false;
+            
+            // Reset and restart dismiss timer
+            startDismissTimer();
+            
+            // Reset the countdown animation
+            const timerIndicator = document.querySelector('.timer-indicator');
+            timerIndicator.style.animation = 'none';
+            setTimeout(() => {
+                timerIndicator.style.animation = `countdown ${DISPLAY_TIME/1000}s linear forwards`;
+            }, 10);
+        }
+
+        function updateDisplay() {
+            const formatter = new Intl.NumberFormat('en-US', { 
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                useGrouping: true
+            });
+            
+            document.getElementById('balance').textContent = formatter.format(balance);
+            
+            document.getElementById('updateTime').textContent = 
+                `Last updated: ${new Date().toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                })}`;
+        }
+
+        function checkForUpdates() {
+            const newBalance = parseFloat(localStorage.getItem('balance'));
+            const newTransactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+            
+            if(!isNaN(newBalance)) {
+                balance = newBalance < 0 ? 0 : newBalance;
+                transactionHistory = newTransactions;
+                updateDisplay();
+                updateTransactionHistory();
+            }
+        }
+
+        // Event listeners for country detector
+        document.getElementById('countryDetector').addEventListener('click', () => {
+            // Reset timer when clicked
+            startDismissTimer();
+            
+            // Reset countdown animation
+            const timerIndicator = document.querySelector('.timer-indicator');
+            timerIndicator.style.animation = 'none';
+            setTimeout(() => {
+                timerIndicator.style.animation = `countdown ${DISPLAY_TIME/1000}s linear forwards`;
+            }, 10);
+        });
+
+        document.getElementById('showCountryBtn').addEventListener('click', showCountryDetector);
+
+        // Hover to pause dismiss
+        document.getElementById('countryDetector').addEventListener('mouseenter', () => {
+            if (!isDismissed) {
+                // Pause the dismiss timer
+                clearTimeout(dismissTimer);
+                
+                // Pause the countdown animation
+                const timerIndicator = document.querySelector('.timer-indicator');
+                timerIndicator.style.animationPlayState = 'paused';
+            }
+        });
+
+        document.getElementById('countryDetector').addEventListener('mouseleave', () => {
+            if (!isDismissed) {
+                // Resume dismiss timer with remaining time
+                const timerIndicator = document.querySelector('.timer-indicator');
+                const computedStyle = window.getComputedStyle(timerIndicator);
+                const widthPercent = parseFloat(computedStyle.width) / timerIndicator.parentElement.offsetWidth * 100;
+                const remainingTime = (widthPercent / 100) * DISPLAY_TIME;
+                
+                clearTimeout(dismissTimer);
+                dismissTimer = setTimeout(() => {
+                    hideCountryDetector();
+                }, remainingTime);
+                
+                // Resume countdown animation
+                timerIndicator.style.animationPlayState = 'running';
+            }
+        });
+
+        // Initialization
+        // Show detector initially, then auto-dismiss
+        setTimeout(() => {
+            const detector = document.getElementById('countryDetector');
+            detector.classList.add('visible');
+            detectCountry();
+        }, 500);
+
+        updateDisplay();
+        updateTransactionHistory();
+        setInterval(checkForUpdates, 1000);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('pageLoader').style.opacity = '0';
+                document.querySelector('.dashboard-container').style.opacity = '1';
+                setTimeout(() => {
+                    document.getElementById('pageLoader').style.display = 'none';
+                }, 300);
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Statements - BeyondTrust Bank</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #002f6c;
+            --secondary-blue: #005eb8;
+            --accent-green: #00a859;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: #f8f9fb;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .statement-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+        }
+
+        .statement-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .statement-header h1 {
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .date-range-picker {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .date-group {
+            position: relative;
+        }
+
+        .date-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+
+        .date-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        .generate-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            transition: background 0.3s;
+        }
+
+        .generate-btn:hover {
+            background: var(--secondary-blue);
+        }
+
+        .disclaimer {
+            margin-top: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="statement-container">
+        <div class="statement-header">
+            <h1>Generate Account Statement</h1>
+            <p>Select date range (maximum 3 months)</p>
+        </div>
+
+        <form id="statementForm">
+            <div class="date-range-picker">
+                <div class="date-group">
+                    <label>From Date</label>
+                    <input type="date" id="fromDate" required>
+                </div>
+                <div class="date-group">
+                    <label>To Date</label>
+                    <input type="date" id="toDate" required>
+                </div>
+            </div>
+
+            <button type="submit" class="generate-btn">
+                <i class="fas fa-file-pdf"></i> Generate PDF Statement
+            </button>
+        </form>
+
+        <div class="disclaimer">
+            Statements are generated based on available transaction history.
+            PDF will be downloaded automatically after generation.
+        </div>
+    </div>
+
+    <script>
+        // Set default dates (last 3 months)
+        const today = new Date();
+        const toDate = today.toISOString().split('T')[0];
+        const fromDate = new Date(today.setMonth(today.getMonth() - 3)).toISOString().split('T')[0];
+        
+        document.getElementById('fromDate').value = fromDate;
+        document.getElementById('toDate').value = toDate;
+        document.getElementById('fromDate').max = toDate;
+        document.getElementById('toDate').max = toDate;
+
+        // Form submission handler
+        document.getElementById('statementForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            
+            // Validate date range (max 3 months)
+            const diffInMonths = monthDiff(new Date(fromDate), new Date(toDate));
+            if(diffInMonths > 3) {
+                alert('Maximum date range is 3 months');
+                return;
+            }
+
+            // Get transactions from localStorage
+            const transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+            
+            // Filter transactions by date (pseudo-filter for example)
+            const filteredTransactions = transactions.filter(transaction => {
+                // Add actual date filtering logic here
+                return true;
+            });
+
+            if(filteredTransactions.length === 0) {
+                alert('No transactions found in selected period');
+                return;
+            }
+
+            // Generate PDF
+            generatePDF(filteredTransactions, fromDate, toDate);
+        });
+
+        function monthDiff(dateFrom, dateTo) {
+            return dateTo.getMonth() - dateFrom.getMonth() + 
+                (12 * (dateTo.getFullYear() - dateFrom.getFullYear()));
+        }
+
+        function generatePDF(transactions, fromDate, toDate) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add header
+            doc.setFontSize(18);
+            doc.setTextColor(0, 47, 108); // Primary blue
+            doc.text('BeyondTrust Investment Bank - Account Statement', 15, 20);
+            
+            // Add customer info
+            doc.setFontSize(12);
+            doc.setTextColor(40, 40, 40);
+            doc.text(`Account Holder: Julie Claire Taylor`, 15, 30);
+            doc.text(`Account Number: IC790484679`, 15, 35);
+            doc.text(`Statement Period: ${formatDate(fromDate)} - ${formatDate(toDate)}`, 15, 40);
+            
+            // Add transaction table
+            const columns = [
+                { title: "Date", dataKey: "time" },
+                { title: "Description", dataKey: "name" },
+                { title: "Amount (£)", dataKey: "amount" }
+            ];
+            
+            const rows = transactions.map(transaction => ({
+                time: transaction.time,
+                name: transaction.name,
+                amount: (transaction.amount > 0 ? '+' : '-') + '£' + Math.abs(transaction.amount).toFixed(2)
+            }));
+
+            doc.autoTable({
+                startY: 45,
+                head: [columns.map(col => col.title)],
+                body: rows.map(row => columns.map(col => row[col.dataKey])),
+                theme: 'grid',
+                styles: { 
+                    fontSize: 10,
+                    cellPadding: 3,
+                    valign: 'middle'
+                },
+                headStyles: {
+                    fillColor: [0, 47, 108], // Primary blue
+                    textColor: 255,
+                    fontSize: 11
+                },
+                alternateRowStyles: {
+                    fillColor: [240, 240, 240]
+                }
+            });
+
+            // Add footer
+            const pageCount = doc.getNumberOfPages();
+            for(let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(10);
+                doc.text(`Page ${i} of ${pageCount}`, 15, doc.internal.pageSize.height - 10);
+            }
+
+            // Save PDF
+            doc.save(`Bank_Statement_${fromDate}_to_${toDate}.pdf`);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+    </script>
+</body>
+</html>

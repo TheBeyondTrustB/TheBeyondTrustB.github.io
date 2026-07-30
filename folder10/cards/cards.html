@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Services - BeyondTrust Bank</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #002f6c;
+            --secondary-blue: #005eb8;
+            --accent-gold: #FFD700;
+            --accent-silver: #C0C0C0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: #f8f9fb;
+            min-height: 100vh;
+        }
+
+        .cards-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .card-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-blue);
+            position: relative;
+            display: inline-block;
+            padding: 0 2rem;
+        }
+
+        .card-header h1::before,
+        .card-header h1::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                var(--primary-blue) 0%, 
+                var(--secondary-blue) 100%);
+        }
+
+        .card-header h1::before {
+            left: -110px;
+        }
+
+        .card-header h1::after {
+            right: -110px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 100px;
+            height: 100px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .card.gold {
+            border-top: 4px solid var(--accent-gold);
+        }
+
+        .card.platinum {
+            border-top: 4px solid var(--secondary-blue);
+        }
+
+        .card.silver {
+            border-top: 4px solid var(--accent-silver);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .card-features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-features i {
+            color: var(--secondary-blue);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: modalFade 0.3s ease;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary-blue);
+        }
+
+        .modal-icon {
+            font-size: 3rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .card-header h1::before,
+            .card-header h1::after {
+                width: 50px;
+            }
+            
+            .card-header h1::before {
+                left: -60px;
+            }
+            
+            .card-header h1::after {
+                right: -60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cards-container">
+        <div class="card-header">
+            <h1>Request a Card</h1>
+        </div>
+
+        <div class="cards-grid">
+            <!-- Platinum Card -->
+            <div class="card platinum" onclick="showModal()">
+                <i class="fas fa-gem card-icon"></i>
+                <h2 class="card-title">Platinum Card</h2>
+                <ul class="card-features">
+                    <li><i class="fas fa-check"></i> Unlimited Cashback</li>
+                    <li><i class="fas fa-check"></i> Priority Service</li>
+                    <li><i class="fas fa-check"></i> Travel Insurance</li>
+                </ul>
+            </div>
+
+            <!-- Gold Card -->
+            <div class="card gold" onclick="showModal()">
+                <i class="fas fa-award card-icon"></i>
+                <h2 class="card-title">Gold Card</h2>
+                <ul class="card-features">
+                    <li><i class="fas fa-check"></i> 5% Cashback</li>
+                    <li><i class="fas fa-check"></i> Lounge Access</li>
+                    <li><i class="fas fa-check"></i> Fuel Surcharge Waiver</li>
+                </ul>
+            </div>
+
+            <!-- Silver Card -->
+            <div class="card silver" onclick="showModal()">
+                <i class="fas fa-credit-card card-icon"></i>
+                <h2 class="card-title">Classic Card</h2>
+                <ul class="card-features">
+                    <li><i class="fas fa-check"></i> 2% Cashback</li>
+                    <li><i class="fas fa-check"></i> Contactless Payments</li>
+                    <li><i class="fas fa-check"></i> Zero Liability Protection</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="cardModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+                <i class="fas fa-info-circle modal-icon"></i>
+                <h2>Card Assistance</h2>
+                <p>You already have an active card associated with your account.</p>
+                <p>For any card-related inquiries or issues, please contact our customer care:</p>
+                <div style="margin: 1.5rem 0;">
+                    <p><i class="fas fa-phone"></i> +44 7411256349</p>
+                    <p><i class="fas fa-envelope"></i> cards@beyondtrust.fi</p>
+                </div>
+                <button onclick="closeModal()" style="
+                    background: var(--primary-blue);
+                    color: white;
+                    border: none;
+                    padding: 0.8rem 2rem;
+                    border-radius: 8px;
+                    cursor: pointer;
+                ">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showModal() {
+            document.getElementById('cardModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('cardModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('cardModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

