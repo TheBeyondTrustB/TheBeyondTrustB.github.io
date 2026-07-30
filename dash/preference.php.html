@@ -1,0 +1,446 @@
+﻿<script>alert('Sorry, You are Not Logged in!!!');</script><script>window.location='../login.php';</script><!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from quixlab.com/demo/tradient/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 30 Sep 2020 05:43:51 GMT -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Beyond Trust Bank | Online</title>
+    <!-- Favicon icon -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/favicon.ico">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/favicon.ico">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/favicon.ico">
+	<link rel="apple-touch-icon-precomposed" href="#">
+	<link rel="shortcut icon" href="images/favicon.ico">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="vendor/waves/waves.min.css">
+    <link rel="stylesheet" href="vendor/toastr/toastr.min.css">
+    <link rel="stylesheet" href="vendor/owlcarousel/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dashboard">
+
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+
+    <div id="main-wrapper">
+
+        <div class="header dashboard">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <nav class="navbar navbar-expand-lg navbar-light px-0">
+                            <a class="navbar-brand" href="../index.php.html"><img src="images/logo.png" style="width: 130px !important; max-width: 130px !important" alt=""></a>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
+                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                <ul class="navbar-nav">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="index.php.html">Dashboard</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="transfer.php.html">Transfers</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="history.php.html">History</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="profile.php.html">Settings</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="loan.php.html">Loans</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="cheque.php.html">Cheques</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="dashboard_log my-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="account_money">
+                                        <ul>
+                                            <li class="crypto">
+                                                <span>0.00</span>
+                                                
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="profile_log dropdown">
+                                        <div class="user" data-toggle="dropdown">
+                                            <span class="thumb"><i class="la la-user"></i></span>
+                                            <span class="name"></span>
+                                            <span class="arrow"><i class="la la-angle-down"></i></span>
+                                        </div>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a href="profile.php.html" class="dropdown-item">
+                                                <i class="la la-user"></i> Profile
+                                            </a>
+                                             <a href="preference.php.html" class="dropdown-item">
+                                                <i class="la la-cogs"></i> Preferences
+                                            </a>
+                                             <a href="password.php.html" class="dropdown-item">
+                                                <i class="la la-key"></i> Update Password
+                                            </a>
+                                            
+                                             <a href="add-account.php.html" class="dropdown-item">
+                                                <i class="la la-user-plus"></i> Add Account
+                                            </a>
+                                             <a href="linked-accounts.php.html" class="dropdown-item">
+                                                <i class="la la-briefcase"></i> Linked Accounts
+                                            </a>
+                                            
+
+
+                                            <a href="../login.php.html" class="dropdown-item logout">
+                                                <i class="la la-sign-out"></i> Logout
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+         <div class="page_title section-padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page_title-content">
+                            <p>Welcome,  | IP: 197.211.59.179 | <img style="height: 20px" src="../static/flags/ng_64.png">  Nigeria</p>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+
+               <div class="settings mb-80">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-3 col-md-4">
+                        <div class="card settings_menu">
+                            <div class="card-header">
+                                <h4 class="card-title">Settings</h4>
+                            </div>
+                             <div class="card-body">
+                                <ul>
+                                    <li class="nav-item">
+                                        <a href="profile.php.html" class="nav-link">
+                                            <i class="la la-user"></i>
+                                            <span>Edit Profile</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="preference.php.html" class="nav-link active">
+                                            <i class="la la-cogs"></i>
+                                            <span>Preferences</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="password.php.html" class="nav-link">
+                                            <i class="la la-key"></i>
+                                            <span>Security</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="linked-accounts.php.html" class="nav-link">
+                                            <i class="la la-briefcase"></i>
+                                            <span>Linked Account</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-9 col-md-8">
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Preferences  </h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="#" method="POST">
+                                            <div class="form-row">
+                                                <div class="form-group col-6">
+                                                    <label class="mr-sm-2">Local Currency</label>
+                                                    <select class="form-control" name="currency" required="">
+
+                                                            <option value=""></option>
+                                                            <option value="GBP">GBP</option>
+                                                            <option value="EUR">EUR</option>
+                                                            <option value="USD">USD</option>
+                                                            <option value="CNY">CNY</option>
+                                                            <option value="MXN">MXN</option>
+
+
+
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-6">
+                                                    <label class="mr-sm-2">Time Zone</label>
+                                                    <select class="form-control">
+                                                            <option timezoneid="1" gmtadjustment="GMT-12:00" usedaylighttime="0" value="-12">(GMT-12:00) International Date Line West</option>
+                                                            <option timezoneid="2" gmtadjustment="GMT-11:00" usedaylighttime="0" value="-11">(GMT-11:00) Midway Island, Samoa</option>
+                                                            <option timezoneid="3" gmtadjustment="GMT-10:00" usedaylighttime="0" value="-10">(GMT-10:00) Hawaii
+                                                            </option>
+                                                            <option timezoneid="4" gmtadjustment="GMT-09:00" usedaylighttime="1" value="-9">(GMT-09:00) Alaska
+                                                            </option>
+                                                            <option timezoneid="5" gmtadjustment="GMT-08:00" usedaylighttime="1" value="-8">(GMT-08:00) Pacific Time (US & Canada)</option>
+                                                            <option timezoneid="6" gmtadjustment="GMT-08:00" usedaylighttime="1" value="-8">(GMT-08:00) Tijuana, Baja California</option>
+                                                            <option timezoneid="7" gmtadjustment="GMT-07:00" usedaylighttime="0" value="-7">(GMT-07:00) Arizona
+                                                            </option>
+                                                            <option timezoneid="8" gmtadjustment="GMT-07:00" usedaylighttime="1" value="-7">(GMT-07:00) Chihuahua, La Paz, Mazatlan</option>
+                                                            <option timezoneid="9" gmtadjustment="GMT-07:00" usedaylighttime="1" value="-7">(GMT-07:00) Mountain Time (US & Canada)</option>
+                                                            <option timezoneid="10" gmtadjustment="GMT-06:00" usedaylighttime="0" value="-6">(GMT-06:00) Central America
+                                                            </option>
+                                                            <option timezoneid="11" gmtadjustment="GMT-06:00" usedaylighttime="1" value="-6">(GMT-06:00) Central Time (US & Canada)</option>
+                                                            <option timezoneid="12" gmtadjustment="GMT-06:00" usedaylighttime="1" value="-6">(GMT-06:00) Guadalajara, Mexico City, Monterrey</option>
+                                                            <option timezoneid="13" gmtadjustment="GMT-06:00" usedaylighttime="0" value="-6">(GMT-06:00) Saskatchewan
+                                                            </option>
+                                                            <option timezoneid="14" gmtadjustment="GMT-05:00" usedaylighttime="0" value="-5">(GMT-05:00) Bogota, Lima, Quito, Rio Branco</option>
+                                                            <option timezoneid="15" gmtadjustment="GMT-05:00" usedaylighttime="1" value="-5">(GMT-05:00) Eastern Time (US & Canada)</option>
+                                                            <option timezoneid="16" gmtadjustment="GMT-05:00" usedaylighttime="1" value="-5">(GMT-05:00) Indiana (East)
+                                                            </option>
+                                                            <option timezoneid="17" gmtadjustment="GMT-04:00" usedaylighttime="1" value="-4">(GMT-04:00) Atlantic Time (Canada)
+                                                            </option>
+                                                            <option timezoneid="18" gmtadjustment="GMT-04:00" usedaylighttime="0" value="-4">(GMT-04:00) Caracas, La Paz
+                                                            </option>
+                                                            <option timezoneid="19" gmtadjustment="GMT-04:00" usedaylighttime="0" value="-4">(GMT-04:00) Manaus
+                                                            </option>
+                                                            <option timezoneid="20" gmtadjustment="GMT-04:00" usedaylighttime="1" value="-4">(GMT-04:00) Santiago
+                                                            </option>
+                                                            <option timezoneid="21" gmtadjustment="GMT-03:30" usedaylighttime="1" value="-3.5">(GMT-03:30) Newfoundland
+                                                            </option>
+                                                            <option timezoneid="22" gmtadjustment="GMT-03:00" usedaylighttime="1" value="-3">(GMT-03:00) Brasilia
+                                                            </option>
+                                                            <option timezoneid="23" gmtadjustment="GMT-03:00" usedaylighttime="0" value="-3">(GMT-03:00) Buenos Aires, Georgetown
+                                                            </option>
+                                                            <option timezoneid="24" gmtadjustment="GMT-03:00" usedaylighttime="1" value="-3">(GMT-03:00) Greenland
+                                                            </option>
+                                                            <option timezoneid="25" gmtadjustment="GMT-03:00" usedaylighttime="1" value="-3">(GMT-03:00) Montevideo
+                                                            </option>
+                                                            <option timezoneid="26" gmtadjustment="GMT-02:00" usedaylighttime="1" value="-2">(GMT-02:00) Mid-Atlantic
+                                                            </option>
+                                                            <option timezoneid="27" gmtadjustment="GMT-01:00" usedaylighttime="0" value="-1">(GMT-01:00) Cape Verde Is.
+                                                            </option>
+                                                            <option timezoneid="28" gmtadjustment="GMT-01:00" usedaylighttime="1" value="-1">(GMT-01:00) Azores
+                                                            </option>
+                                                            <option timezoneid="29" gmtadjustment="GMT+00:00" usedaylighttime="0" value="0">(GMT+00:00) Casablanca, Monrovia, Reykjavik</option>
+                                                            <option timezoneid="30" gmtadjustment="GMT+00:00" usedaylighttime="1" value="0">(GMT+00:00) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London</option>
+                                                            <option timezoneid="31" gmtadjustment="GMT+01:00" usedaylighttime="1" value="1">(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna
+                                                            </option>
+                                                            <option timezoneid="32" gmtadjustment="GMT+01:00" usedaylighttime="1" value="1">(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague
+                                                            </option>
+                                                            <option timezoneid="33" gmtadjustment="GMT+01:00" usedaylighttime="1" value="1">(GMT+01:00) Brussels, Copenhagen, Madrid, Paris</option>
+                                                            <option timezoneid="34" gmtadjustment="GMT+01:00" usedaylighttime="1" value="1">(GMT+01:00) Sarajevo, Skopje, Warsaw, Zagreb</option>
+                                                            <option timezoneid="35" gmtadjustment="GMT+01:00" usedaylighttime="1" value="1">(GMT+01:00) West Central Africa
+                                                            </option>
+                                                            <option timezoneid="36" gmtadjustment="GMT+02:00" usedaylighttime="1" value="2">(GMT+02:00) Amman
+                                                            </option>
+                                                            <option timezoneid="37" gmtadjustment="GMT+02:00" usedaylighttime="1" value="2">(GMT+02:00) Athens, Bucharest, Istanbul
+                                                            </option>
+                                                            <option timezoneid="38" gmtadjustment="GMT+02:00" usedaylighttime="1" value="2">(GMT+02:00) Beirut
+                                                            </option>
+                                                            <option timezoneid="39" gmtadjustment="GMT+02:00" usedaylighttime="1" value="2">(GMT+02:00) Cairo
+                                                            </option>
+                                                            <option timezoneid="40" gmtadjustment="GMT+02:00" usedaylighttime="0" value="2">(GMT+02:00) Harare, Pretoria
+                                                            </option>
+                                                            <option timezoneid="41" gmtadjustment="GMT+02:00" usedaylighttime="1" value="2">(GMT+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius
+                                                            </option>
+                                                            <option timezoneid="42" gmtadjustment="GMT+02:00" usedaylighttime="1" value="2">(GMT+02:00) Jerusalem
+                                                            </option>
+                                                            <option timezoneid="43" gmtadjustment="GMT+02:00" usedaylighttime="1" value="2">(GMT+02:00) Minsk
+                                                            </option>
+                                                            <option timezoneid="44" gmtadjustment="GMT+02:00" usedaylighttime="1" value="2">(GMT+02:00) Windhoek
+                                                            </option>
+                                                            <option timezoneid="45" gmtadjustment="GMT+03:00" usedaylighttime="0" value="3">(GMT+03:00) Kuwait, Riyadh, Baghdad
+                                                            </option>
+                                                            <option timezoneid="46" gmtadjustment="GMT+03:00" usedaylighttime="1" value="3">(GMT+03:00) Moscow, St. Petersburg, Volgograd</option>
+                                                            <option timezoneid="47" gmtadjustment="GMT+03:00" usedaylighttime="0" value="3">(GMT+03:00) Nairobi
+                                                            </option>
+                                                            <option timezoneid="48" gmtadjustment="GMT+03:00" usedaylighttime="0" value="3">(GMT+03:00) Tbilisi
+                                                            </option>
+                                                            <option timezoneid="49" gmtadjustment="GMT+03:30" usedaylighttime="1" value="3.5">(GMT+03:30) Tehran
+                                                            </option>
+                                                            <option timezoneid="50" gmtadjustment="GMT+04:00" usedaylighttime="0" value="4">(GMT+04:00) Abu Dhabi, Muscat
+                                                            </option>
+                                                            <option timezoneid="51" gmtadjustment="GMT+04:00" usedaylighttime="1" value="4">(GMT+04:00) Baku
+                                                            </option>
+                                                            <option timezoneid="52" gmtadjustment="GMT+04:00" usedaylighttime="1" value="4">(GMT+04:00) Yerevan
+                                                            </option>
+                                                            <option timezoneid="53" gmtadjustment="GMT+04:30" usedaylighttime="0" value="4.5">(GMT+04:30) Kabul
+                                                            </option>
+                                                            <option timezoneid="54" gmtadjustment="GMT+05:00" usedaylighttime="1" value="5">(GMT+05:00) Yekaterinburg
+                                                            </option>
+                                                            <option timezoneid="55" gmtadjustment="GMT+05:00" usedaylighttime="0" value="5">(GMT+05:00) Islamabad, Karachi, Tashkent</option>
+                                                            <option timezoneid="56" gmtadjustment="GMT+05:30" usedaylighttime="0" value="5.5">(GMT+05:30) Sri Jayawardenapura
+                                                            </option>
+                                                            <option timezoneid="57" gmtadjustment="GMT+05:30" usedaylighttime="0" value="5.5">(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi</option>
+                                                            <option timezoneid="58" gmtadjustment="GMT+05:45" usedaylighttime="0" value="5.75">(GMT+05:45) Kathmandu
+                                                            </option>
+                                                            <option timezoneid="59" gmtadjustment="GMT+06:00" usedaylighttime="1" value="6">(GMT+06:00) Almaty, Novosibirsk
+                                                            </option>
+                                                            <option timezoneid="60" gmtadjustment="GMT+06:00" usedaylighttime="0" value="6">(GMT+06:00) Astana, Dhaka</option>
+                                                            <option timezoneid="61" gmtadjustment="GMT+06:30" usedaylighttime="0" value="6.5">(GMT+06:30) Yangon (Rangoon)
+                                                            </option>
+                                                            <option timezoneid="62" gmtadjustment="GMT+07:00" usedaylighttime="0" value="7">(GMT+07:00) Bangkok, Hanoi, Jakarta
+                                                            </option>
+                                                            <option timezoneid="63" gmtadjustment="GMT+07:00" usedaylighttime="1" value="7">(GMT+07:00) Krasnoyarsk
+                                                            </option>
+                                                            <option timezoneid="64" gmtadjustment="GMT+08:00" usedaylighttime="0" value="8">(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi
+                                                            </option>
+                                                            <option timezoneid="65" gmtadjustment="GMT+08:00" usedaylighttime="0" value="8">(GMT+08:00) Kuala Lumpur, Singapore
+                                                            </option>
+                                                            <option timezoneid="66" gmtadjustment="GMT+08:00" usedaylighttime="0" value="8">(GMT+08:00) Irkutsk, Ulaan Bataar
+                                                            </option>
+                                                            <option timezoneid="67" gmtadjustment="GMT+08:00" usedaylighttime="0" value="8">(GMT+08:00) Perth
+                                                            </option>
+                                                            <option timezoneid="68" gmtadjustment="GMT+08:00" usedaylighttime="0" value="8">(GMT+08:00) Taipei
+                                                            </option>
+                                                            <option timezoneid="69" gmtadjustment="GMT+09:00" usedaylighttime="0" value="9">(GMT+09:00) Osaka, Sapporo, Tokyo
+                                                            </option>
+                                                            <option timezoneid="70" gmtadjustment="GMT+09:00" usedaylighttime="0" value="9">(GMT+09:00) Seoul
+                                                            </option>
+                                                            <option timezoneid="71" gmtadjustment="GMT+09:00" usedaylighttime="1" value="9">(GMT+09:00) Yakutsk
+                                                            </option>
+                                                            <option timezoneid="72" gmtadjustment="GMT+09:30" usedaylighttime="0" value="9.5">(GMT+09:30) Adelaide
+                                                            </option>
+                                                            <option timezoneid="73" gmtadjustment="GMT+09:30" usedaylighttime="0" value="9.5">(GMT+09:30) Darwin
+                                                            </option>
+                                                            <option timezoneid="74" gmtadjustment="GMT+10:00" usedaylighttime="0" value="10">(GMT+10:00) Brisbane
+                                                            </option>
+                                                            <option timezoneid="75" gmtadjustment="GMT+10:00" usedaylighttime="1" value="10">(GMT+10:00) Canberra, Melbourne, Sydney</option>
+                                                            <option timezoneid="76" gmtadjustment="GMT+10:00" usedaylighttime="1" value="10">(GMT+10:00) Hobart
+                                                            </option>
+                                                            <option timezoneid="77" gmtadjustment="GMT+10:00" usedaylighttime="0" value="10">(GMT+10:00) Guam, Port Moresby
+                                                            </option>
+                                                            <option timezoneid="78" gmtadjustment="GMT+10:00" usedaylighttime="1" value="10">(GMT+10:00) Vladivostok
+                                                            </option>
+                                                            <option timezoneid="79" gmtadjustment="GMT+11:00" usedaylighttime="1" value="11">(GMT+11:00) Magadan, Solomon Is., New Caledonia</option>
+                                                            <option timezoneid="80" gmtadjustment="GMT+12:00" usedaylighttime="1" value="12">(GMT+12:00) Auckland, Wellington
+                                                            </option>
+                                                            <option timezoneid="81" gmtadjustment="GMT+12:00" usedaylighttime="0" value="12">(GMT+12:00) Fiji, Kamchatka, Marshall Is.</option>
+                                                            <option timezoneid="82" gmtadjustment="GMT+13:00" usedaylighttime="0" value="13">(GMT+13:00) Nuku'alofa
+                                                            </option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <button class="btn btn-success pl-5 pr-5" name="curr">Save</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Notifications</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="" method="post">
+                                            <div class="form-row col-6">
+                                                <div class="form-group mb-0">
+                                                    <label class="toggle">
+                                                    <input class="toggle-checkbox" name="otp" type="checkbox">
+                                                    <div class="toggle-switch"></div>
+                                                    <span class="toggle-label">Enable OTP Confirmation</span>
+                                                </label>
+                                                   
+                                                </div>
+
+
+                                                 <div class="form-group mb-0">
+                                                    <label class="toggle">
+                                                    <input class="toggle-checkbox" name="sms" type="checkbox">
+                                                    <div class="toggle-switch"></div>
+                                                    <span class="toggle-label">Enable SMS Notification</span>
+                                                </label>
+                                                   
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <button name="otpbtn" type="submit" class="btn btn-success">Save</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="footer">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-xl-6 col-md-6">
+                        <div class="copy_right">
+                            Copyright © 2025 Beyond Trust Bank. All Rights Reserved.
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-md-6 text-lg-right text-center">
+                        <div class="social">
+                            <a href="#"><i class="fa fa-youtube-play"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/waves/waves.min.js"></script>
+
+    <script src="vendor/toastr/toastr.min.js"></script>
+    <script src="vendor/toastr/toastr-init.js"></script>
+
+
+    <script src="vendor/circle-progress/circle-progress.min.js"></script>
+    <script src="vendor/circle-progress/circle-progress-init.js"></script>
+    <script src="vendor/magnific-popup/magnific-popup.js"></script>
+    <script src="vendor/magnific-popup/magnific-popup-init.js"></script>
+
+    
+    <script src="vendor/validator/jquery.validate.js"></script>
+    <script src="vendor/validator/validator-init.js"></script>
+
+    <!--  flot-chart js -->
+    <script src="vendor/apexchart/apexcharts.min.js"></script>
+    <script src="vendor/apexchart/apexchart-init.js"></script>
+
+
+    <!-- <script src="./js/dashboard.js"></script> -->
+    <script src="js/scripts.js"></script>
+</body>
+
+
+<!-- Mirrored from quixlab.com/demo/tradient/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 30 Sep 2020 05:44:08 GMT -->
+</html>
